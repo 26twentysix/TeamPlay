@@ -1,4 +1,4 @@
-package com.lilangel.TeamPlay;
+package com.lilangel.teamplay;
 
 public class App {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.lilangel.TeamPlay;
+package com.lilangel.teamplay;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
