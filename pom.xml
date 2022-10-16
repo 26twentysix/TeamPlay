@@ -64,7 +64,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <configuration>
-                    <mainClass>com.lilangel.teamplay.App</mainClass>
+                    <mainClass>com.lilangel.teamplay.TeamPlayApplication</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -82,7 +82,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.lilangel.teamplay.App</mainClass>
+                            <mainClass>com.lilangel.teamplay.TeamPlayApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
