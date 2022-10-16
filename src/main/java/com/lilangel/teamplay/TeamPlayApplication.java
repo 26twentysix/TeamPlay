@@ -1,8 +1,13 @@
 package com.lilangel.teamplay;
 
-public class App {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TeamPlayApplication {
     public static void main(String[] args) {
         System.out.println("Hello, world!");
+        SpringApplication.run(TeamPlayApplication.class, args);
     }
 
     public static boolean testMethod(boolean flag) {

@@ -7,11 +7,11 @@ public class AppTests {
 
     @Test
     public void testMethodFailInit() {
-        assertFalse(App.testMethod(false));
+        assertFalse(TeamPlayApplication.testMethod(false));
     }
 
     @Test
     public void testMethodCorrectInit() {
-        assertTrue(App.testMethod(true));
+        assertTrue(TeamPlayApplication.testMethod(true));
     }
 }
