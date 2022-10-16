@@ -15,7 +15,7 @@ $ mvn clean test
 
 ### Run app with maven
 ```sh
-$ mvn clean compile exec:java
+$ mvn clean compile spring-boot:run
 ```
 
 ### Run standalone app from console
@@ -23,4 +23,9 @@ $ mvn clean compile exec:java
 $ mvn clean compile package
 $ cd target
 $ java -jar TeamPlay-{current app version}.jar
+```
+
+### Run app without maven installed
+```sh
+$ ./mvnw spring-boot:run
 ```
