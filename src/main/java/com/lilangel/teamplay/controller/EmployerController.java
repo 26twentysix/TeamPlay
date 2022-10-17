@@ -43,9 +43,9 @@ public class EmployerController {
      * @param id идентификатор сотрудника
      * @return ответ с информацией о сотруднике и HTTP-статусом 200
      */
-    @GetMapping(value = "/get?{id}")
+    @GetMapping(value = "/get/{id}")
     public ResponseEntity<Employer> getById(@PathVariable Integer id) {
-        Employer employer = employerService.getById();
+        Employer employer = employerService.getById(id);
         return new ResponseEntity<>(employer, HttpStatus.OK);
     }
 
@@ -84,7 +84,7 @@ public class EmployerController {
      * @param id идентификатор сотрудника
      * @return ответ с HTTP-статусом 200
      */
-    @DeleteMapping(value = "/delete?{id}")
+    @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         employerService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
