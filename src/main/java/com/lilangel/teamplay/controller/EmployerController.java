@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/employers")
@@ -55,8 +55,8 @@ public class EmployerController {
      * @return ответ с информацией о всех сотрудниках и HTTP-статусом 200
      */
     @GetMapping(value = "/getall")
-    public ResponseEntity<List<Employer>> getAll() {
-        List<Employer> allEmployers = employerService.getAll();
+    public ResponseEntity<HashMap<Integer, Employer>> getAll() {
+        HashMap<Integer, Employer> allEmployers = employerService.getAll();
         return new ResponseEntity<>(allEmployers, HttpStatus.OK);
 
     }

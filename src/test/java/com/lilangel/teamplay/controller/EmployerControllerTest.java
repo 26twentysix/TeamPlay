@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,7 +49,7 @@ public class EmployerControllerTest {
     public void getAllTest() {
         employerController.create("John Doe", "johndoe@test.com", 1);
         employerController.create("Jane Doe", "janedoe@test.com", 1);
-        ResponseEntity<List<Employer>> response = employerController.getAll();
+        ResponseEntity<HashMap<Integer, Employer>> response = employerController.getAll();
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
         assertEquals(expected, actual);
