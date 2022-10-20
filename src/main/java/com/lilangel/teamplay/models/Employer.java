@@ -20,9 +20,10 @@ public class Employer {
 
     private Integer teamId;
 
-    public Employer(String name, String email) {
+    public Employer(String name, String email, Integer teamId) {
         this.name = name;
         this.email = email;
+        this.teamId = teamId;
     }
 
     public Integer getId() {

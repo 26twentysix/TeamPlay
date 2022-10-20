@@ -21,7 +21,7 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public Integer createNewEmployer(String name, String email, Integer teamId) throws IOException {
-        Employer employer = new Employer(name, email);
+        Employer employer = new Employer(name, email, teamId);
         Integer id = employer.getId();
         employerDao.add(employer);
         return id;
