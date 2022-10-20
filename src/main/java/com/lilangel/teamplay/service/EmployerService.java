@@ -4,7 +4,7 @@ import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 
 public interface EmployerService {
 
@@ -17,7 +17,7 @@ public interface EmployerService {
      * @return ответ с личным идентификатором сотрудника
      * @throws IOException в случае возникновения проблем при работе с файловой системой
      */
-    Integer createNewEmployer(String name, String email, Integer teamId) throws IOException;
+    Integer saveNewEmployer(String name, String email, Integer teamId) throws IOException;
 
     /**
      * Удаляет сотрудника по идентификатору
@@ -42,6 +42,6 @@ public interface EmployerService {
      * @return ответ с информацией обо всех сотрудниках
      * @throws IOException в случае возникновения проблем при работе с файловой системой
      */
-    HashMap<Integer, Employer> getAll() throws IOException;
+    List<Employer> getAll() throws IOException;
 
 }
