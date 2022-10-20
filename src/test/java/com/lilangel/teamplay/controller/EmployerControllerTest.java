@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.controller;
 
+import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +33,7 @@ public class EmployerControllerTest {
      * и ненулевым телом ответа.
      */
     @Test
-    public void getByIdTest() {
+    public void getByIdTest() throws EmployerNotFoundException, IOException {
         Integer createdId = Integer.parseInt(employerController.create("John Doe", "johndoe@test.com", 1).getBody());
         ResponseEntity<Employer> response = employerController.getById(createdId);
         HttpStatus expected = HttpStatus.OK;
@@ -46,7 +48,7 @@ public class EmployerControllerTest {
      * и ненулевым телом ответа.
      */
     @Test
-    public void getAllTest() {
+    public void getAllTest() throws IOException {
         employerController.create("John Doe", "johndoe@test.com", 1);
         employerController.create("Jane Doe", "janedoe@test.com", 1);
         ResponseEntity<HashMap<Integer, Employer>> response = employerController.getAll();
@@ -61,7 +63,7 @@ public class EmployerControllerTest {
      * Метод проходит проверку, если запрос на создание сотрудника возвращает ответ с HTTP-статусом 201.
      */
     @Test
-    public void createTest() {
+    public void createTest() throws IOException {
         HttpStatus actual = employerController.create("John Doe", "johndoe@test.com", 1).getStatusCode();
         HttpStatus expected = HttpStatus.CREATED;
         assertEquals(expected, actual);
@@ -72,7 +74,7 @@ public class EmployerControllerTest {
      * Метод проходит проверку, если запрос на удаление сотрудника возвращает ответ с HTTP-статусом 200.
      */
     @Test
-    public void deleteTest() {
+    public void deleteTest() throws EmployerNotFoundException, IOException {
         Integer createdId = Integer.parseInt(employerController.create("John Doe", "johndoe@test.com", 1).getBody());
         ResponseEntity<?> response = employerController.deleteById(createdId);
         HttpStatus expected = HttpStatus.OK;
