@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/employers")
@@ -57,8 +57,8 @@ public class EmployerController {
      * @return ответ с информацией о всех сотрудниках и HTTP-статусом 200
      */
     @GetMapping(value = "/getall")
-    public ResponseEntity<HashMap<Integer, Employer>> getAll() throws IOException {
-        HashMap<Integer, Employer> allEmployers = employerService.getAll();
+    public ResponseEntity<List<Employer>> getAll() throws IOException {
+        List<Employer> allEmployers = employerService.getAll();
         return new ResponseEntity<>(allEmployers, HttpStatus.OK);
 
     }
@@ -76,7 +76,7 @@ public class EmployerController {
             @RequestParam(NAME) String name,
             @RequestParam(EMAIL) String email,
             @RequestParam(TEAM_ID) Integer teamId) throws IOException {
-        Integer createdId = employerService.createNewEmployer(name, email, teamId);
+        Integer createdId = employerService.saveNewEmployer(name, email, teamId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 

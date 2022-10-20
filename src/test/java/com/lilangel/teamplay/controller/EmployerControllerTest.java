@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +51,7 @@ public class EmployerControllerTest {
     public void getAllTest() throws IOException {
         employerController.create("John Doe", "johndoe@test.com", 1);
         employerController.create("Jane Doe", "janedoe@test.com", 1);
-        ResponseEntity<HashMap<Integer, Employer>> response = employerController.getAll();
+        ResponseEntity<List<Employer>> response = employerController.getAll();
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
         assertEquals(expected, actual);
