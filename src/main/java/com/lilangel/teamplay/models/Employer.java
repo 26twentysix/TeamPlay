@@ -1,14 +1,18 @@
 package com.lilangel.teamplay.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.Table;
 
-@Data
+@Entity
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "employers")
 public class Employer {
     @Id
     @GeneratedValue
@@ -25,9 +29,4 @@ public class Employer {
         this.email = email;
         this.teamId = teamId;
     }
-
-    public Integer getId() {
-        return id;
-    }
-
 }
