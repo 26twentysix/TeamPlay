@@ -2,13 +2,15 @@ package com.lilangel.teamplay.controller;
 
 import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Класс юнит-тестов для {@link EmployerController}
  */
 @SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 public class EmployerControllerTest {
 
     private final EmployerController employerController;
@@ -33,7 +37,7 @@ public class EmployerControllerTest {
      * и ненулевым телом ответа.
      */
     @Test
-    public void getByIdTest() throws EmployerNotFoundException, IOException {
+    public void getByIdTest() throws EmployerNotFoundException {
         Integer createdId = Integer.parseInt(employerController.create("John Doe", "johndoe@test.com", 1).getBody());
         ResponseEntity<Employer> response = employerController.getById(createdId);
         HttpStatus expected = HttpStatus.OK;
@@ -48,7 +52,7 @@ public class EmployerControllerTest {
      * и ненулевым телом ответа.
      */
     @Test
-    public void getAllTest() throws IOException {
+    public void getAllTest() {
         employerController.create("John Doe", "johndoe@test.com", 1);
         employerController.create("Jane Doe", "janedoe@test.com", 1);
         ResponseEntity<List<Employer>> response = employerController.getAll();
@@ -63,7 +67,7 @@ public class EmployerControllerTest {
      * Метод проходит проверку, если запрос на создание сотрудника возвращает ответ с HTTP-статусом 201.
      */
     @Test
-    public void createTest() throws IOException {
+    public void createTest() {
         HttpStatus actual = employerController.create("John Doe", "johndoe@test.com", 1).getStatusCode();
         HttpStatus expected = HttpStatus.CREATED;
         assertEquals(expected, actual);
@@ -74,11 +78,16 @@ public class EmployerControllerTest {
      * Метод проходит проверку, если запрос на удаление сотрудника возвращает ответ с HTTP-статусом 200.
      */
     @Test
-    public void deleteTest() throws EmployerNotFoundException, IOException {
+    public void deleteTest() throws EmployerNotFoundException {
         Integer createdId = Integer.parseInt(employerController.create("John Doe", "johndoe@test.com", 1).getBody());
         ResponseEntity<?> response = employerController.deleteById(createdId);
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
         assertEquals(expected, actual);
+    }
+
+    @AfterEach
+    public void clearDb() {
+
     }
 }
