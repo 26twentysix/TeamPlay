@@ -9,17 +9,4 @@ public class TeamPlayApplication {
         System.out.println("Hello, world!");
         SpringApplication.run(TeamPlayApplication.class, args);
     }
-
-    public static boolean testMethod(boolean flag) {
-        System.out.println("Starting app configuration.");
-        if (flag) {
-            System.out.println("Configuration done.");
-            main(null);
-            return true;
-        }
-        else {
-            System.out.println("Something went wrong.");
-            return false;
-        }
-    }
 }
