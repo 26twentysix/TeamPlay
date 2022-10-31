@@ -2,7 +2,6 @@ package com.lilangel.teamplay.controller;
 
 import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -84,10 +83,5 @@ public class EmployerControllerTest {
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
         assertEquals(expected, actual);
-    }
-
-    @AfterEach
-    public void clearDb() {
-
     }
 }
