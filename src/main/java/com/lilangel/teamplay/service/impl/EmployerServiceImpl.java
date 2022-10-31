@@ -5,9 +5,9 @@ import com.lilangel.teamplay.models.Employer;
 import com.lilangel.teamplay.repository.EmployerRepository;
 import com.lilangel.teamplay.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,29 +22,33 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public Integer saveNewEmployer(String name, String email, Integer teamId) throws IOException {
+    public Integer saveNewEmployer(String name, String email, Integer teamId) {
         Employer employer = new Employer(name, email, teamId);
         employerRepository.save(employer);
         return employer.getId();
     }
 
     @Override
-    public void deleteById(Integer id) throws EmployerNotFoundException, IOException {
-        employerRepository.deleteById(id);
-    }
-
-    @Override
-    public Employer getById(Integer id) throws EmployerNotFoundException, IOException {
-        Optional<Employer> employer = employerRepository.findById(id);
-        if (employer.isPresent()) {
-            return employer.get();
-        } else {
-            throw new EmployerNotFoundException("Employer with given ID is not found.");
+    public void deleteById(Integer id) throws EmployerNotFoundException {
+        try {
+            employerRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmployerNotFoundException("Employer with given ID was not found.");
         }
     }
 
     @Override
-    public List<Employer> getAll() throws IOException {
+    public Employer getById(Integer id) throws EmployerNotFoundException {
+        Optional<Employer> employer = employerRepository.findById(id);
+        if (employer.isPresent()) {
+            return employer.get();
+        } else {
+            throw new EmployerNotFoundException("Employer with given ID was not found.");
+        }
+    }
+
+    @Override
+    public List<Employer> getAll() {
         List<Employer> employers = new ArrayList<>();
         employerRepository.findAll().forEach(employers::add);
         return employers;
