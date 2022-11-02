@@ -65,7 +65,10 @@ public class EmployerHandler extends AbstractHandler {
 
     private String create(List<String> args) {
         //TODO Отформатировать вывод
-        return employerService.saveNewEmployer(args.get(0), args.get(1), Integer.parseInt(args.get(2))).toString();
+        return employerService.saveNewEmployer(args.get(0),
+                args.get(1) + " " + args.get(2),
+                Integer.parseInt(args.get(3)))
+                .toString();
     }
 
     @SneakyThrows
