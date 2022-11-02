@@ -20,12 +20,20 @@ import java.util.Objects;
 @Component
 public class Bot extends TelegramLongPollingBot {
 
+    /**
+     * Сообщение, если команда не существует
+     */
     private final String WRONG_COMMAND_MESSAGE = "Wrong command, try /help to get bot available commands";
 
+    /**
+     * Справка
+     */
     //TODO Написать справку
-    private final String HELP_MESSAGE = "This is bot help message";
-    private ListableBeanFactory listableBeanFactory;
+    private final String HELP_MESSAGE = """
+            Bot Help:
+                This is bot help message""";
 
+    private final ListableBeanFactory listableBeanFactory;
     Map<String, Object> controllers;
 
     @Autowired
@@ -33,6 +41,7 @@ public class Bot extends TelegramLongPollingBot {
         this.listableBeanFactory = listableBeanFactory;
         controllers = listableBeanFactory.getBeansWithAnnotation(Controller.class);
     }
+
     @Value("${bot.username}")
     private String botUsername;
 
@@ -63,27 +72,30 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    private String messageHandler(String message) {
+    /**
+     * Базовый обработчик сообщения
+     * @param message строка сообщения
+     * @return строка ответа
+     */
+    public String messageHandler(String message) {
         if (Objects.equals(message, "/help")) {
             return HELP_MESSAGE;
         }
-        String command = "";
+        String command;
         if (message.startsWith("/")) {
             int indexOfSpace = message.indexOf(" ");
             if (indexOfSpace == -1) {
                 command = message;
-            }
-            else {
+            } else {
                 var parsed = message.split(" ");
                 command = parsed[0];
-                }
             }
-        if (controllers.containsKey(command.substring(1) + "Handler")) {
-            AbstractHandler handler = (AbstractHandler) controllers.get(command.substring(1) + "Handler");
-            return handler.messageHandler(message);
-        } else {
-            return WRONG_COMMAND_MESSAGE;
+            if (controllers.containsKey(command.substring(1) + "Handler")) {
+                AbstractHandler handler = (AbstractHandler) controllers.get(command.substring(1) + "Handler");
+                return handler.requestHandler(message);
+            }
         }
+        return WRONG_COMMAND_MESSAGE;
     }
 
     @PostConstruct
