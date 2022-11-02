@@ -6,7 +6,6 @@ import com.lilangel.teamplay.models.Employer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Класс юнит-тестов для {@link EmployerService}
  */
 @SpringBootTest
-@ActiveProfiles("test")
 @Transactional
 public class EmployerServiceTest {
 
@@ -43,7 +41,7 @@ public class EmployerServiceTest {
      * Метод проходит проверку, если после удаления сотрудника, запрос на получение сотрудника по идентификатору
      * удаленного бросает исключение {@link EmployerNotFoundException}
      *
-     * @throws EmployerNotFoundException
+     * @throws EmployerNotFoundException если сотрудник не был найден
      */
     @Test
     public void deleteByIdTest() throws EmployerNotFoundException {
@@ -78,7 +76,7 @@ public class EmployerServiceTest {
     /**
      * Тестирует метод {@link EmployerServiceImpl#getById(Integer)}
      * Метод проходит проверку, если получается получить сотрудника по идентификатору, полученному после создания нового
-     * @throws EmployerNotFoundException
+     * @throws EmployerNotFoundException если сотрудник не был найден
      */
     @Test
     public void getByIdTest() throws EmployerNotFoundException {
