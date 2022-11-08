@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employers")
-public class EmployerController {
+public class EmployerController extends AbstractController {
 
     /**
      * Параметр запроса "id"
