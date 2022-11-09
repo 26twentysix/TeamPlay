@@ -4,7 +4,7 @@ import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
 import com.lilangel.teamplay.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Обработчик сообщений, начинающихся с "/employer"
  */
-@Controller
+@Component
 public class EmployerHandler extends AbstractHandler {
 
     /**
@@ -21,19 +21,19 @@ public class EmployerHandler extends AbstractHandler {
      */
     private final String HELP_MESSAGE = """
             /employer Help:
-            /employer help - print this message
-            /employer getAll - get all employers
-            /employer getById {id} - get employer by id
-            /employer create {name} {surname} {email} {teamid} - create new employer
-            /employer deleteById {id} - delete employer""";
+                `/employer help` - print this message
+                `/employer getAll` - get all employers
+                `/employer getById {id}` - get employer by id
+                `/employer create {name} {surname} {email} {teamid}` - create new employer
+                `/employer deleteById {id}` - delete employer""";
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try /employer help to get available commands";
+    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/employer help` to get available commands";
     private final EmployerService employerService;
 
     /**
-     * Словарь, хранящий обработчики различных комманд
+     * Словарь, хранящий обработчики различных команд
      */
     private final Map<String, Function<List<String>, String>> handlers = new HashMap<>();
 
