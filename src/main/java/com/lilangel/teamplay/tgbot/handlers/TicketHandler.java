@@ -27,7 +27,7 @@ public class TicketHandler extends AbstractHandler {
     /**
      * Словарь, хранящий обработчики различных комманд
      */
-    private final Map<String, Function<List<String>, String>> handlers = new HashMap<>();
+    private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
     @Autowired
     public TicketHandler(TicketHandler ticketHandler) {
@@ -43,19 +43,18 @@ public class TicketHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/ticket"
      *
      * @param request строка сообщения
+     * @param args
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request) {
+    public String requestHandler(String request, Map<String, String> args) {
         String command;
-        List<String> args = new ArrayList<>();
         int indexOfSpace = request.indexOf(" ");
         if (indexOfSpace == -1) {
             command = "help";
         } else {
             var parsed = request.split(" ");
             command = parsed[1];
-            args.addAll(Arrays.asList(parsed).subList(2, parsed.length));
         }
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
@@ -67,7 +66,7 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка справки
      */
-    private String helpMessage(List<String> args) {
+    private String helpMessage(Map<String, String> args) {
         return HELP_MESSAGE;
     }
 
@@ -77,7 +76,7 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех тикетах
      */
-    private String getAll(List<String> args) {
+    private String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tProject ID: %d
@@ -100,10 +99,10 @@ public class TicketHandler extends AbstractHandler {
     /**
      * Возвращает информацию о тикету по eго идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args список аргументов
      * @return строка с информацией о тикете
      */
-    private String getById(List<String> args) {
+    private String getById(Map<String, String> args) {
         String template = """
                 Ticket:
                     ID: %d
@@ -115,7 +114,7 @@ public class TicketHandler extends AbstractHandler {
                     Employer ID: %d""";
         Ticket ticket;
         try {
-            ticket = ticketService.getById(Integer.parseInt(args.get(0)));
+            ticket = ticketService.getById(Integer.parseInt(args.get("id")));
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
@@ -126,21 +125,20 @@ public class TicketHandler extends AbstractHandler {
     /**
      * Создает новый тикет
      *
-     * @param args список аргументов, args[0] - project id, args[1] - важность, args[2] - статус,
-     *             args[3] - короткое описание, args[4] - полное описание
+     * @param args список аргументов
      * @return строка с идентификатором созданного тикета
      */
-    private String create(List<String> args) {
+    private String create(Map<String, String> args) {
         if (args.size() != 5) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
         String createdId = ticketService.saveNewTicket(
-                        Integer.parseInt(args.get(0)),
-                        args.get(1),
-                        args.get(2),
-                        args.get(3),
-                        args.get(4))
+                        Integer.parseInt(args.get("project_id")),
+                        args.get("importance"),
+                        args.get("status"),
+                        args.get("short_description"),
+                        args.get("full_description"))
                 .toString();
         return String.format(template, createdId);
     }
@@ -148,13 +146,13 @@ public class TicketHandler extends AbstractHandler {
     /**
      * Удаляет тикет по идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args список аргументов
      * @return строка с результатом
      */
 
-    private String deleteById(List<String> args) {
+    private String deleteById(Map<String, String> args) {
         try {
-            ticketService.deleteById(Integer.parseInt(args.get(0)));
+            ticketService.deleteById(Integer.parseInt(args.get("id")));
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }

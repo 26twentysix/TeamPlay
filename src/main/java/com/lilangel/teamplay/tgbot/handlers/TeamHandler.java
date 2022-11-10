@@ -27,7 +27,7 @@ public class TeamHandler extends AbstractHandler{
     /**
      * Словарь, хранящий обработчики различных комманд
      */
-    private final Map<String, Function<List<String>, String>> handlers = new HashMap<>();
+    private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
     @Autowired
     public TeamHandler(TeamService teamService) {
@@ -43,19 +43,18 @@ public class TeamHandler extends AbstractHandler{
      * Базовый обработчик для сообщений, начинающихся с "/team"
      *
      * @param request строка сообщения
+     * @param args аргументы команды
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request) {
+    public String requestHandler(String request, Map<String, String> args) {
         String command;
-        List<String> args = new ArrayList<>();
         int indexOfSpace = request.indexOf(" ");
         if (indexOfSpace == -1) {
             command = "help";
         } else {
             var parsed = request.split(" ");
             command = parsed[1];
-            args.addAll(Arrays.asList(parsed).subList(2, parsed.length));
         }
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
@@ -64,20 +63,20 @@ public class TeamHandler extends AbstractHandler{
     }
 
     /**
-     * @param args список аргументов
+     * @param args аргументы
      * @return строка справки
      */
-    private String helpMessage(List<String> args) {
+    private String helpMessage(Map<String, String> args) {
         return HELP_MESSAGE;
     }
 
     /**
      * Возвращает информацию о всех проектах
      *
-     * @param args список аргументов
+     * @param args аргументы
      * @return строка с информацией о всех проектах
      */
-    private String getAll(List<String> args) {
+    private String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
@@ -95,10 +94,10 @@ public class TeamHandler extends AbstractHandler{
     /**
      * Возвращает информацию о команде по его идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args аргументы
      * @return строка с информацией о команде
      */
-    private String getById(List<String> args) {
+    private String getById(Map<String, String> args) {
         String template = """
                 Team:
                     ID: %d
@@ -106,7 +105,7 @@ public class TeamHandler extends AbstractHandler{
                     Lead ID: %d""";
         Team team;
         try {
-            team = teamService.getById(Integer.parseInt(args.get(0)));
+            team = teamService.getById(Integer.parseInt(args.get("id")));
         } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
@@ -116,17 +115,17 @@ public class TeamHandler extends AbstractHandler{
     /**
      * Создает новую команду
      *
-     * @param args список аргументов, args[0] - имя, args[1] - lead id
+     * @param args аргументы
      * @return строка с идентификатором созданной команды
      */
-    private String create(List<String> args) {
+    private String create(Map<String, String> args) {
         if (args.size() != 2) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew team ID: %s";
         String createdId = teamService.saveNewTeam(
-                        args.get(0),
-                        Integer.parseInt(args.get(1)))
+                        args.get("name"),
+                        Integer.parseInt(args.get("leadid")))
                 .toString();
         return String.format(template, createdId);
     }
@@ -134,13 +133,13 @@ public class TeamHandler extends AbstractHandler{
     /**
      * Удаляет команду по идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args аргументы
      * @return строка с результатом
      */
 
-    private String deleteById(List<String> args) {
+    private String deleteById(Map<String, String> args) {
         try {
-            teamService.deleteById(Integer.parseInt(args.get(0)));
+            teamService.deleteById(Integer.parseInt(args.get("id")));
         } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
