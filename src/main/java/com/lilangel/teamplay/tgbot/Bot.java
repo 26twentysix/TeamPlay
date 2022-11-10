@@ -12,9 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -96,10 +94,27 @@ public class Bot extends TelegramLongPollingBot {
             }
             if (handlers.containsKey(command.substring(1) + "Handler")) {
                 AbstractHandler handler = handlers.get(command.substring(1) + "Handler");
-                return handler.requestHandler(message);
+                return handler.requestHandler(message, parseArgs(message));
             }
         }
         return WRONG_COMMAND_MESSAGE;
+    }
+
+    private Map<String, String> parseArgs(String message) {
+        Map<String, String> args = new HashMap<>();
+        List<String> splittedArgs = (Arrays.stream(message.split("=")).toList());
+        for (int i = 0; i < splittedArgs.size() - 1; i++) {
+            String argName = splittedArgs.get(i).substring(splittedArgs.get(i).lastIndexOf(" ") + 1);
+            String arg;
+            if (i != splittedArgs.size() - 2) {
+                arg = splittedArgs.get(i+1).substring(0, splittedArgs.get(i+1).lastIndexOf(" "));
+            }
+            else {
+                arg = splittedArgs.get(i+1);
+            }
+            args.put(argName, arg);
+        }
+        return args;
     }
 
     @PostConstruct
