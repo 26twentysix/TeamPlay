@@ -125,7 +125,7 @@ public class TeamHandler extends AbstractHandler{
         String template = "Successfully created\nNew team ID: %s";
         String createdId = teamService.saveNewTeam(
                         args.get("name"),
-                        Integer.parseInt(args.get("leadid")))
+                        Integer.parseInt(args.get("lead_id")))
                 .toString();
         return String.format(template, createdId);
     }

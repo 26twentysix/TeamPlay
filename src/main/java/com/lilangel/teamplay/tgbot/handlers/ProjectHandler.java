@@ -126,7 +126,7 @@ public class ProjectHandler extends AbstractHandler {
         String template = "Successfully created\nNew project ID: %s";
         String createdId = projectService.saveNewProject(
                         args.get("name"),
-                        Integer.parseInt(args.get("teamid")),
+                        Integer.parseInt(args.get("team_id")),
                         args.get("description"))
                 .toString();
         return String.format(template, createdId);

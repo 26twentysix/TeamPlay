@@ -136,7 +136,7 @@ public class EmployerHandler extends AbstractHandler {
         String createdId = employerService.saveNewEmployer(
                         args.get("name"),
                         args.get("email"),
-                        Integer.parseInt(args.get("teamid")))
+                        Integer.parseInt(args.get("team_id")))
                 .toString();
         return String.format(template, createdId);
     }
