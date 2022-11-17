@@ -4,7 +4,7 @@ import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
 import com.lilangel.teamplay.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Обработчик сообщений, начинающихся с "/employer"
  */
-@Controller
+@Component
 public class EmployerHandler extends AbstractHandler {
 
     /**
@@ -21,21 +21,21 @@ public class EmployerHandler extends AbstractHandler {
      */
     private final String HELP_MESSAGE = """
             /employer Help:
-            /employer help - print this message
-            /employer getAll - get all employers
-            /employer getById {id} - get employer by id
-            /employer create {name} {surname} {email} {teamid} - create new employer
-            /employer deleteById {id} - delete employer""";
+                `/employer help` - print this message
+                `/employer getAll` - get all employers
+                `/employer getById id={id}` - get employer by id
+                `/employer create name={name} email={email} teamid={teamid}` - create new employer
+                `/employer deleteById id={id}` - delete employer""";
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try /employer help to get available commands";
+    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/employer help` to get available commands";
     private final EmployerService employerService;
 
     /**
-     * Словарь, хранящий обработчики различных комманд
+     * Словарь, хранящий обработчики различных команд
      */
-    private final Map<String, Function<List<String>, String>> handlers = new HashMap<>();
+    private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
     @Autowired
     public EmployerHandler(EmployerService employerService) {
@@ -51,19 +51,18 @@ public class EmployerHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/employer"
      *
      * @param request строка сообщения
+     * @param args
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request) {
+    public String requestHandler(String request, Map<String, String> args) {
         String command;
-        List<String> args = new ArrayList<>();
         int indexOfSpace = request.indexOf(" ");
         if (indexOfSpace == -1) {
             command = "help";
         } else {
             var parsed = request.split(" ");
             command = parsed[1];
-            args.addAll(Arrays.asList(parsed).subList(2, parsed.length));
         }
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
@@ -75,7 +74,7 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка справки
      */
-    private String helpMessage(List<String> args) {
+    private String helpMessage(Map<String, String> args) {
         return HELP_MESSAGE;
     }
 
@@ -85,7 +84,7 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех сотрудниках
      */
-    private String getAll(List<String> args) {
+    private String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
@@ -104,10 +103,10 @@ public class EmployerHandler extends AbstractHandler {
     /**
      * Возвращает информацию о сотруднике по его идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args список аргументов
      * @return строка с информацией о сотруднике
      */
-    private String getById(List<String> args) {
+    private String getById(Map<String, String> args) {
         String template = """
                 Employer:
                     ID: %d
@@ -116,7 +115,7 @@ public class EmployerHandler extends AbstractHandler {
                     Team ID: %d""";
         Employer employer;
         try {
-            employer = employerService.getById(Integer.parseInt(args.get(0)));
+            employer = employerService.getById(Integer.parseInt(args.get("id")));
         } catch (EmployerNotFoundException e) {
             return e.getMessage();
         }
@@ -126,18 +125,18 @@ public class EmployerHandler extends AbstractHandler {
     /**
      * Создает нового сотрудника
      *
-     * @param args список аргументов, args[0] - имя, args[1] - фамилия, args[2] - e-mail, args[3] - team id
+     * @param args список аргументов
      * @return строка с идентификатором созданного сотрудника
      */
-    private String create(List<String> args) {
-        if (args.size() != 4) {
+    private String create(Map<String, String> args) {
+        if (args.size() != 3) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew employer ID: %s";
         String createdId = employerService.saveNewEmployer(
-                        args.get(0) + " " + args.get(1),
-                        args.get(2),
-                        Integer.parseInt(args.get(3)))
+                        args.get("name"),
+                        args.get("email"),
+                        Integer.parseInt(args.get("team_id")))
                 .toString();
         return String.format(template, createdId);
     }
@@ -145,13 +144,13 @@ public class EmployerHandler extends AbstractHandler {
     /**
      * Удаляет сотрудника по идентификатору
      *
-     * @param args список аргументов, args[0] - Integer id
+     * @param args список аргументов
      * @return строка с результатом
      */
 
-    private String deleteById(List<String> args) {
+    private String deleteById(Map<String, String> args) {
         try {
-            employerService.deleteById(Integer.parseInt(args.get(0)));
+            employerService.deleteById(Integer.parseInt(args.get("id")));
         } catch (EmployerNotFoundException e) {
             return e.getMessage();
         }
