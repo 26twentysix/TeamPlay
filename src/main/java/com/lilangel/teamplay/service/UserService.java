@@ -28,7 +28,7 @@ public interface UserService {
      * Возвращает информацию о пользователе по идентификатору
      *
      * @param id идентификатор пользователя
-     * @return ответ с информацией о пользователя
+     * @return ответ с информацией о пользователе
      * @throws UserNotFoundException если пользователь с заданным идентификатором не найден
      */
     User getById(Integer id) throws UserNotFoundException;

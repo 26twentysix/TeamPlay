@@ -23,7 +23,7 @@ public class Ticket {
     @GeneratedValue
     private Integer id;
 
-    private Integer projectID;
+    private Integer projectId;
 
     private String priority;
 
@@ -33,10 +33,9 @@ public class Ticket {
 
     private Integer employerId;
 
-    public Ticket(Integer projectID, String priority,
-                  String shortDescription, String fullDescription, Integer employerId) {
+    public Ticket(Integer projectId, String priority, String shortDescription, String fullDescription, Integer employerId) {
         this.priority = priority;
-        this.projectID = projectID;
+        this.projectId = projectId;
         this.shortDescription = shortDescription;
         this.fullDescription = fullDescription;
         this.employerId = employerId;
