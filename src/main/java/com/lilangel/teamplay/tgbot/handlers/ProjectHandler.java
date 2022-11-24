@@ -16,7 +16,11 @@ public class ProjectHandler extends AbstractHandler {
      */
     private final String HELP_MESSAGE = """
             /project Help:
-                `/project help` - print this message""";
+                `/project help` - print this message
+                `/project get_all` - get all projects
+                `/project get_by_id id={id}` - get project by id
+                `/project create name={name} description={description} team_id={team_id}` - create new project
+                `/project delete_by_id id={id}` - delete project""";
 
     /**
      * Сообщение о том, что команда не существует
@@ -34,10 +38,10 @@ public class ProjectHandler extends AbstractHandler {
     public ProjectHandler(ProjectService projectService) {
         this.projectService = projectService;
         handlers.put("help", this::helpMessage);
-        handlers.put("getAll", this::getAll);
+        handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
-        handlers.put("getById", this::getById);
-        handlers.put("deleteById", this::deleteById);
+        handlers.put("get_by_id", this::getById);
+        handlers.put("delete_by_id", this::deleteById);
     }
 
     /**

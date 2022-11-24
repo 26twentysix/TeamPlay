@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
+import com.lilangel.teamplay.tgbot.Bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,24 +43,24 @@ class ProjectHandlerTest {
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "wrongCommand"
+     * с запросом, содержащим команду "wrong"
      * Метод проходит проверку, если возрвращается ответ, начинающийся с "Wrong command"
      */
     @Test
     public void wrongCommandTest() {
-        String request = "/project wrongCommand";
+        String request = "/project wrong";
         String response = projectHandler.requestHandler(request, new HashMap<>());
         assertTrue(response.startsWith("Wrong command"));
     }
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getAll"
+     * с запросом, содержащим команду "get_all"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Projects:"
      */
     @Test
     public void getAllTest() {
-        String request = "/project getAll";
+        String request = "/project get_all";
         projectHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
         String response = projectHandler.requestHandler(request, new HashMap<>());
         assertNotNull(response);
@@ -68,14 +69,14 @@ class ProjectHandlerTest {
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getById"
+     * с запросом, содержащим команду "get_by_id"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Project:"
      */
     @Test
     public void getByIdTest() {
-        String createdId = projectHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = projectHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/project getById id=" + parsedResp[parsedResp.length - 1];
+        String request = "/project get_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = projectHandler.requestHandler(request, args);
@@ -85,14 +86,14 @@ class ProjectHandlerTest {
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "deleteById id={previouslyCreatedId}"
+     * с запросом, содержащим команду "delete_by_id id={previouslyCreatedId}"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Successfully"
      */
     @Test
     public void deleteByIdTest() {
-        String createdId = projectHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = projectHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/project deleteById id=" + parsedResp[parsedResp.length - 1];
+        String request = "/project delete_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = projectHandler.requestHandler(request, args);
@@ -102,12 +103,12 @@ class ProjectHandlerTest {
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "deleteById id=-1"
+     * с запросом, содержащим команду "delete_by_id id=-1"
      * Метод проходит проверку, если возвращается непустой ответ, начинающийся с "Project with given ID"
      */
     @Test
     public void deleteByWrongIdTest() {
-        String request = "/project deleteById id=-1";
+        String request = "/project delete_by_id id=-1";
         Map<String, String> args = new HashMap<>();
         args.put("id", "-1");
         String response = projectHandler.requestHandler(request, args);

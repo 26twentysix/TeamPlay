@@ -43,24 +43,24 @@ class EmployerHandlerTest {
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "wrongCommand"
+     * с запросом, содержащим команду "wrong"
      * Метод проходит проверку, если возрвращается ответ, начинающийся с "Wrong command"
      */
     @Test
     public void wrongCommandTest() {
-        String request = "/employers wrongCommand";
+        String request = "/employers wrong";
         String response = employerHandler.requestHandler(request, new HashMap<>());
         assertTrue(response.startsWith("Wrong command"));
     }
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getAll"
+     * с запросом, содержащим команду "get_all"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Employers:"
      */
     @Test
     public void getAllTest() {
-        String request = "/employers getAll";
+        String request = "/employers get_all";
         employerHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
         String response = employerHandler.requestHandler(request, new HashMap<>());
         assertNotNull(response);
@@ -69,14 +69,14 @@ class EmployerHandlerTest {
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getById"
+     * с запросом, содержащим команду "get_by_id"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Employer:"
      */
     @Test
     public void getByIdTest() {
         String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/employers getById " + parsedResp[parsedResp.length - 1];
+        String request = "/employers get_by_id " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = employerHandler.requestHandler(request, args);
@@ -86,14 +86,14 @@ class EmployerHandlerTest {
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "deleteById id={previouslyCreatedId}"
+     * с запросом, содержащим команду "delete_by_id id={previouslyCreatedId}"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Successfully"
      */
     @Test
     public void deleteByIdTest() {
         String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/employers deleteById " + parsedResp[parsedResp.length - 1];
+        String request = "/employers delete_by_id " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = employerHandler.requestHandler(request, args);
@@ -103,12 +103,12 @@ class EmployerHandlerTest {
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "deleteById id=-1"
+     * с запросом, содержащим команду "delete_by_id id=-1"
      * Метод проходит проверку, если возвращается непустой ответ, начинающийся с "Employer with given ID"
      */
     @Test
     public void deleteByWrongIdTest() {
-        String request = "/employers deleteById -1";
+        String request = "/employers delete_by_id -1";
         Map<String, String> args = new HashMap<>();
         args.put("id", "-1");
         String response = employerHandler.requestHandler(request, args);

@@ -16,7 +16,11 @@ public class TicketHandler extends AbstractHandler {
      */
     private final String HELP_MESSAGE = """
             /ticket Help:
-                `/ticket help` - print this message""";
+                `/ticket help` - print this message
+                `/ticket get_all` - get all employers
+                `/ticket get_by_id id={id}` - get employer by id
+                `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new employer
+                `/ticket delete_by_id id={id}` - delete employer""";
 
     /**
      * Сообщение о том, что команда не существует
@@ -34,10 +38,10 @@ public class TicketHandler extends AbstractHandler {
     public TicketHandler(TicketService ticketService) {
         this.ticketService = ticketService;
         handlers.put("help", this::helpMessage);
-        handlers.put("getAll", this::getAll);
+        handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
-        handlers.put("getById", this::getById);
-        handlers.put("deleteById", this::deleteById);
+        handlers.put("get_by_id", this::getById);
+        handlers.put("delete_by_id", this::deleteById);
     }
 
     /**
@@ -91,8 +95,7 @@ public class TicketHandler extends AbstractHandler {
         StringBuilder response = new StringBuilder("Tickets:\n");
         List<Ticket> tickets = ticketService.getAll();
         for (Ticket t : tickets) {
-            response.append(String.format(template, t.getId(), t.getProjectId(), t.getPriority(), t.getStatus(),
-                    t.getShortDescription(), t.getFullDescription(), t.getEmployerId()));
+            response.append(String.format(template, t.getId(), t.getProjectId(), t.getPriority(), t.getStatus(), t.getShortDescription(), t.getFullDescription(), t.getEmployerId()));
         }
         return response.toString();
     }
@@ -119,8 +122,7 @@ public class TicketHandler extends AbstractHandler {
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getPriority(), ticket.getStatus(),
-                ticket.getShortDescription(), ticket.getFullDescription(), ticket.getEmployerId());
+        return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getPriority(), ticket.getStatus(), ticket.getShortDescription(), ticket.getFullDescription(), ticket.getEmployerId());
     }
 
     /**
@@ -134,14 +136,7 @@ public class TicketHandler extends AbstractHandler {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
-        String createdId = ticketService.saveNewTicket(
-                        Integer.parseInt(args.get("project_id")),
-                        args.get("priority"),
-                        args.get("status"),
-                        args.get("short_description"),
-                        args.get("full_description"),
-                        Integer.parseInt(args.get("employer_id")))
-                .toString();
+        String createdId = ticketService.saveNewTicket(Integer.parseInt(args.get("project_id")), args.get("priority"), args.get("status"), args.get("short_description"), args.get("full_description"), Integer.parseInt(args.get("employer_id"))).toString();
         return String.format(template, createdId);
     }
 
