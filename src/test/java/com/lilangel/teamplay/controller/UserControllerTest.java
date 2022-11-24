@@ -31,7 +31,7 @@ public class UserControllerTest {
      */
     @Test
     public void getByIdTest() throws UserNotFoundException {
-        Integer createdId = Integer.parseInt(userController.create(1, "@Daxak", true).getBody());
+        Integer createdId = Integer.parseInt(userController.create(1, 2, true).getBody());
         ResponseEntity<User> response = userController.getById(createdId);
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
@@ -46,8 +46,8 @@ public class UserControllerTest {
      */
     @Test
     public void getAllTest() {
-        userController.create(1, "@Daxak", true);
-        userController.create(1, "@Daxak", true);
+        userController.create(1, 2, true);
+        userController.create(1, 2, true);
         ResponseEntity<List<User>> response = userController.getAll();
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
@@ -56,12 +56,12 @@ public class UserControllerTest {
     }
 
     /**
-     * Тестирует метод {@link UserController#create(Integer, String, Boolean)}.
+     * Тестирует метод {@link UserController#create(Integer, Integer, Boolean)}.
      * Метод проходит проверку, если запрос на создание пользователя возвращает ответ с HTTP-статусом 201.
      */
     @Test
     public void createTest() {
-        HttpStatus actual = userController.create(1, "@Daxak", true).getStatusCode();
+        HttpStatus actual = userController.create(1, 2, true).getStatusCode();
         HttpStatus expected = HttpStatus.CREATED;
         assertEquals(expected, actual);
     }
@@ -72,7 +72,7 @@ public class UserControllerTest {
      */
     @Test
     public void deleteTest() throws UserNotFoundException {
-        Integer createdId = Integer.parseInt(userController.create(1, "@Daxak", true).getBody());
+        Integer createdId = Integer.parseInt(userController.create(1, 2, true).getBody());
         ResponseEntity<?> response = userController.deleteById(createdId);
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();

@@ -22,10 +22,10 @@ public class EmployerHandler extends AbstractHandler {
     private final String HELP_MESSAGE = """
             /employer Help:
                 `/employer help` - print this message
-                `/employer getAll` - get all employers
-                `/employer getById id={id}` - get employer by id
-                `/employer create name={name} email={email} teamid={teamid}` - create new employer
-                `/employer deleteById id={id}` - delete employer""";
+                `/employer get_all` - get all employers
+                `/employer get_by_id id={id}` - get employer by id
+                `/employer create name={name} email={email} team_id={team_id}` - create new employer
+                `/employer delete_by_id id={id}` - delete employer""";
     /**
      * Сообщение о том, что команда не существует
      */
@@ -41,10 +41,10 @@ public class EmployerHandler extends AbstractHandler {
     public EmployerHandler(EmployerService employerService) {
         this.employerService = employerService;
         handlers.put("help", this::helpMessage);
-        handlers.put("getAll", this::getAll);
+        handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
-        handlers.put("getById", this::getById);
-        handlers.put("deleteById", this::deleteById);
+        handlers.put("get_by_id", this::getById);
+        handlers.put("delete_by_id", this::deleteById);
     }
 
     /**

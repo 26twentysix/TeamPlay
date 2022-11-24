@@ -1,6 +1,7 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
 import com.lilangel.teamplay.exception.TeamNotFoundException;
+import com.lilangel.teamplay.models.Team;
 import com.lilangel.teamplay.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,11 @@ public class TeamHandler extends AbstractHandler{
      */
     private final String HELP_MESSAGE = """
             /team Help:
-                `/team help` - print this message""";
+                `/team help` - print this message
+                `/team get_all` - get all teams
+                `/team get_by_id id={id}` - get team by id
+                `/team create name={name} lead_id={lead_id}` - create new team
+                `/team delete_by_id id={id}` - delete team""";
 
     /**
      * Сообщение о том, что команда не существует
@@ -33,10 +38,10 @@ public class TeamHandler extends AbstractHandler{
     public TeamHandler(TeamService teamService) {
         this.teamService = teamService;
         handlers.put("help", this::helpMessage);
-        handlers.put("getAll", this::getAll);
+        handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
-        handlers.put("getById", this::getById);
-        handlers.put("deleteById", this::deleteById);
+        handlers.put("get_by_id", this::getById);
+        handlers.put("delete_by_id", this::deleteById);
     }
 
     /**
@@ -109,7 +114,7 @@ public class TeamHandler extends AbstractHandler{
         } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, tean.getId(), team.getName(), team.getLeadId());
+        return String.format(template, team.getId(), team.getName(), team.getLeadId());
     }
 
     /**

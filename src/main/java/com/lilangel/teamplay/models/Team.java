@@ -23,10 +23,10 @@ public class Team {
 
     private String name;
 
-    private Integer leadID;
+    private Integer leadId;
 
-    public Team(Integer leadID, String name) {
+    public Team(String name, Integer leadId) {
         this.name = name;
-        this.leadID = leadID;
+        this.leadId = leadId;
     }
 }

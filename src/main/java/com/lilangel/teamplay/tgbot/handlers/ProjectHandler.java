@@ -1,6 +1,7 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
 import com.lilangel.teamplay.exception.ProjectNotFoundException;
+import com.lilangel.teamplay.models.Project;
 import com.lilangel.teamplay.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,11 @@ public class ProjectHandler extends AbstractHandler {
      */
     private final String HELP_MESSAGE = """
             /project Help:
-                `/project help` - print this message""";
+                `/project help` - print this message
+                `/project get_all` - get all projects
+                `/project get_by_id id={id}` - get project by id
+                `/project create name={name} description={description} team_id={team_id}` - create new project
+                `/project delete_by_id id={id}` - delete project""";
 
     /**
      * Сообщение о том, что команда не существует
@@ -33,10 +38,10 @@ public class ProjectHandler extends AbstractHandler {
     public ProjectHandler(ProjectService projectService) {
         this.projectService = projectService;
         handlers.put("help", this::helpMessage);
-        handlers.put("getAll", this::getAll);
+        handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
-        handlers.put("getById", this::getById);
-        handlers.put("deleteById", this::deleteById);
+        handlers.put("get_by_id", this::getById);
+        handlers.put("delete_by_id", this::deleteById);
     }
 
     /**
@@ -86,7 +91,7 @@ public class ProjectHandler extends AbstractHandler {
         StringBuilder response = new StringBuilder("Projects:\n");
         List<Project> projects = projectService.getAll();
         for (Project p : projects) {
-            response.append(String.format(template, p.getId(), p.getName(), p.getTeamId(), p.getDescription));
+            response.append(String.format(template, p.getId(), p.getName(), p.getTeamId(), p.getDescription()));
         }
         return response.toString();
     }
@@ -126,8 +131,8 @@ public class ProjectHandler extends AbstractHandler {
         String template = "Successfully created\nNew project ID: %s";
         String createdId = projectService.saveNewProject(
                         args.get("name"),
-                        Integer.parseInt(args.get("team_id")),
-                        args.get("description"))
+                        args.get("description"),
+                        Integer.parseInt(args.get("team_id")))
                 .toString();
         return String.format(template, createdId);
     }

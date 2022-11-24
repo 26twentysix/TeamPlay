@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
+import com.lilangel.teamplay.tgbot.Bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,19 +48,19 @@ class TeamHandlerTest {
      */
     @Test
     public void wrongCommandTest() {
-        String request = "/team wrongCommand";
+        String request = "/team wrong";
         String response = teamHandler.requestHandler(request, new HashMap<>());
         assertTrue(response.startsWith("Wrong command"));
     }
 
     /**
      * Тестирует метод {@link TeamHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getAll"
+     * с запросом, содержащим команду "get_all"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Teams:"
      */
     @Test
     public void getAllTest() {
-        String request = "/team getAll";
+        String request = "/team get_all";
         teamHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
         String response = teamHandler.requestHandler(request, new HashMap<>());
         assertNotNull(response);
@@ -68,14 +69,14 @@ class TeamHandlerTest {
 
     /**
      * Тестирует метод {@link TeamHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "getById"
+     * с запросом, содержащим команду "get_by_id"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Team:"
      */
     @Test
     public void getByIdTest() {
-        String createdId = teamHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = teamHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/team getById id=" + parsedResp[parsedResp.length - 1];
+        String request = "/team get_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = teamHandler.requestHandler(request, args);
@@ -85,14 +86,14 @@ class TeamHandlerTest {
 
     /**
      * Тестирует метод {@link TeamHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "deleteById id={previouslyCreatedId}"
+     * с запросом, содержащим команду "delete_by_id id={previouslyCreatedId}"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Successfully"
      */
     @Test
     public void deleteByIdTest() {
-        String createdId = teamHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = teamHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
-        String request = "/team deleteById id=" + parsedResp[parsedResp.length - 1];
+        String request = "/team delete_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
         String response = teamHandler.requestHandler(request, args);
@@ -107,7 +108,7 @@ class TeamHandlerTest {
      */
     @Test
     public void deleteByWrongIdTest() {
-        String request = "/team deleteById id=-1";
+        String request = "/team delete_by_id id=-1";
         Map<String, String> args = new HashMap<>();
         args.put("id", "-1");
         String response = teamHandler.requestHandler(request, args);

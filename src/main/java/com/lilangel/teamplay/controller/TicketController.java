@@ -25,10 +25,11 @@ public class TicketController {
     /**
      * Параметр запроса "importance"
      */
-    private static final String IMPORTANCE = "importance";
+    private static final String PRIORITY = "priority";
     /**
      * Параметр запроса "shortDescription"
      */
+    private static final String STATUS = "status";
     private static final String SHORT_DESCRIPTION = "shortDescription";
     /**
      * Параметр запроса "fullDescription"
@@ -74,7 +75,8 @@ public class TicketController {
      * Создает новый тикет
      *
      * @param projectId        идентификатор проекта
-     * @param importance       важность тикета
+     * @param priority         важность тикета
+     * @param status           текущий статус тикета
      * @param shortDescription краткое описание
      * @param fullDescription  полное оаписание
      * @param employerId       идентификатор сотрудника
@@ -83,11 +85,12 @@ public class TicketController {
     @PostMapping(value = "/create")
     public ResponseEntity<String> create(
             @RequestParam(PROJECT_ID) Integer projectId,
-            @RequestParam(IMPORTANCE) String importance,
+            @RequestParam(PRIORITY) String priority,
+            @RequestParam(STATUS) String status,
             @RequestParam(SHORT_DESCRIPTION) String shortDescription,
             @RequestParam(FULL_DESCRIPTION) String fullDescription,
             @RequestParam(EMPLOYER_ID) Integer employerId) {
-        Integer createdId = ticketService.saveNewTicket(projectId, importance,
+        Integer createdId = ticketService.saveNewTicket(projectId, priority, status,
                 shortDescription, fullDescription, employerId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
@@ -101,7 +104,7 @@ public class TicketController {
      */
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws TicketNotFoundException {
-        TicketService.deleteById(id);
+        ticketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
