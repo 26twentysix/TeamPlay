@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Transactional
 public class ProjectControllerTest {
 
+    private final ProjectController projectController;
+
     @Autowired
     public ProjectControllerTest(ProjectController projectController) {
         this.projectController = projectController;

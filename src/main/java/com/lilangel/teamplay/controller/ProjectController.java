@@ -76,7 +76,7 @@ public class ProjectController {
             @RequestParam(NAME) String name,
             @RequestParam(TEAM_ID) Integer teamId,
             @RequestParam(DESCRIPTION) String description) {
-        Integer createdId = projectService.saveNewProject(name, teamId, description);
+        Integer createdId = projectService.saveNewProject(name, description, teamId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 
@@ -89,7 +89,7 @@ public class ProjectController {
      */
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws ProjectNotFoundException {
-        ProjectService.deleteById(id);
+        projectService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

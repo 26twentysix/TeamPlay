@@ -12,12 +12,13 @@ public interface TicketService {
      *
      * @param projectId        идентификатор проекта
      * @param priority         приоритет тикета
+     * @param status           текущий статус тикета
      * @param shortDescription короткое описание тикета
      * @param fullDescription  полное описание тикета
      * @param employerId       идентификатор админа
      * @return ответ с идентификатором тикета
      */
-    Integer saveNewTicket(Integer projectId, String priority, String shortDescription, String fullDescription, Integer employerId);
+    Integer saveNewTicket(Integer projectId, String priority, String status, String shortDescription, String fullDescription, Integer employerId);
 
     /**
      * Удаляет тикет по идентификатору
@@ -34,7 +35,7 @@ public interface TicketService {
      * @return ответ с информацией о тикете
      * @throws TicketNotFoundException если тикет с заданным идентификатором не найден
      */
-    User getById(Integer id) throws TicketNotFoundException;
+    Ticket getById(Integer id) throws TicketNotFoundException;
 
     /**
      * Позволяет получить информацию обо всех тикетах

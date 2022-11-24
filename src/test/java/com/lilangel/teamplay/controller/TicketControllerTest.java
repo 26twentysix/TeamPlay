@@ -33,7 +33,7 @@ public class TicketControllerTest {
     @Test
     public void getByIdTest() throws TicketNotFoundException {
         Integer createdId = Integer.parseInt(ticketController.create(1, "high priority",
-                "first task", "todo many tasks", 2).getBody());
+                "todo", "first task", "todo many tasks", 2).getBody());
         ResponseEntity<Ticket> response = ticketController.getById(createdId);
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
@@ -49,9 +49,9 @@ public class TicketControllerTest {
     @Test
     public void getAllTest() {
         ticketController.create(1, "high priority",
-                "first task", "todo many tasks", 2);
+                "todo", "first task", "todo many tasks", 2);
         ticketController.create(1, "high priority",
-                "first task", "todo many tasks", 2);
+                "todo", "first task", "todo many tasks", 2);
         ResponseEntity<List<Ticket>> response = ticketController.getAll();
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();
@@ -60,13 +60,13 @@ public class TicketControllerTest {
     }
 
     /**
-     * Тестирует метод {@link TicketController#create(Integer, String, String, String, Integer)}.
+     * Тестирует метод {@link TicketController#create(Integer, String, String, String, String, Integer)}.
      * Метод проходит проверку, если запрос на создание тикета возвращает ответ с HTTP-статусом 201.
      */
     @Test
     public void createTest() {
         HttpStatus actual = ticketController.create(1, "high priority",
-                "first task", "todo many tasks", 2).getStatusCode();
+                "todo", "first task", "todo many tasks", 2).getStatusCode();
         HttpStatus expected = HttpStatus.CREATED;
         assertEquals(expected, actual);
     }
@@ -78,7 +78,7 @@ public class TicketControllerTest {
     @Test
     public void deleteTest() throws TicketNotFoundException {
         Integer createdId = Integer.parseInt(ticketController.create(1, "high priority",
-                "first task", "todo many tasks", 2).getBody());
+                "todo", "first task", "todo many tasks", 2).getBody());
         ResponseEntity<?> response = ticketController.deleteById(createdId);
         HttpStatus expected = HttpStatus.OK;
         HttpStatus actual = response.getStatusCode();

@@ -27,15 +27,18 @@ public class Ticket {
 
     private String priority;
 
+    private String status;
+
     private String shortDescription;
 
     private String fullDescription;
 
     private Integer employerId;
 
-    public Ticket(Integer projectId, String priority, String shortDescription, String fullDescription, Integer employerId) {
+    public Ticket(Integer projectId, String priority, String status, String shortDescription, String fullDescription, Integer employerId) {
         this.priority = priority;
         this.projectId = projectId;
+        this.status = status;
         this.shortDescription = shortDescription;
         this.fullDescription = fullDescription;
         this.employerId = employerId;

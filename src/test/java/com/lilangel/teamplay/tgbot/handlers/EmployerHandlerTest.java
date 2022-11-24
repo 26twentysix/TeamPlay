@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
+import com.lilangel.teamplay.tgbot.Bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,7 +74,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void getByIdTest() {
-        String createdId = employerHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
         String request = "/employers getById " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
@@ -90,7 +91,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void deleteByIdTest() {
-        String createdId = employerHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
+        String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
         var parsedResp = createdId.split(" ");
         String request = "/employers deleteById " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();

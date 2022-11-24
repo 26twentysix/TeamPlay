@@ -33,7 +33,7 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             projectRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ProjectNotFoundException("Employer with given ID was not found.");
+            throw new ProjectNotFoundException("Project with given ID was not found.");
         }
     }
 
@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.isPresent()) {
             return project.get();
         } else {
-            throw new ProjectNotFoundException("Employer with given ID was not found.");
+            throw new ProjectNotFoundException("Project with given ID was not found.");
         }
     }
 

@@ -4,7 +4,6 @@ import com.lilangel.teamplay.exception.TeamNotFoundException;
 import com.lilangel.teamplay.models.Team;
 
 import java.util.List;
-
 public interface TeamService {
     /**
      * Добавляет новую команду

@@ -105,7 +105,7 @@ public class Bot extends TelegramLongPollingBot {
      * @param message сообщение, из которого нужно извлечь аргументы команды
      * @return Словарь вида paramName : paramValue
      */
-    public Map<String, String> parseArgs(String message) {
+    public static Map<String, String> parseArgs(String message) {
         Map<String, String> args = new HashMap<>();
         List<String> splittedArgs = (Arrays.stream(message.split("=")).toList());
         for (int i = 0; i < splittedArgs.size() - 1; i++) {

@@ -1,6 +1,7 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
 import com.lilangel.teamplay.exception.TeamNotFoundException;
+import com.lilangel.teamplay.models.Team;
 import com.lilangel.teamplay.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -109,7 +110,7 @@ public class TeamHandler extends AbstractHandler{
         } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, tean.getId(), team.getName(), team.getLeadId());
+        return String.format(template, team.getId(), team.getName(), team.getLeadId());
     }
 
     /**

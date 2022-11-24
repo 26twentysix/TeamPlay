@@ -1,6 +1,7 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
 import com.lilangel.teamplay.exception.TicketNotFoundException;
+import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,8 +31,8 @@ public class TicketHandler extends AbstractHandler {
     private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
     @Autowired
-    public TicketHandler(TicketHandler ticketHandler) {
-        this.ticketService = ticketHandler;
+    public TicketHandler(TicketService ticketService) {
+        this.ticketService = ticketService;
         handlers.put("help", this::helpMessage);
         handlers.put("getAll", this::getAll);
         handlers.put("create", this::create);
@@ -88,10 +89,10 @@ public class TicketHandler extends AbstractHandler {
                                 
                 """;
         StringBuilder response = new StringBuilder("Tickets:\n");
-        List<Tickets> tickets = ticketService.getAll();
+        List<Ticket> tickets = ticketService.getAll();
         for (Ticket t : tickets) {
-            response.append(String.format(template, t.getId(), t.getProjectId(), t.getImportance(), t.getStatus(),
-                    t.getShortDesctiption(), t.getFullDescription(), t.getEmployerId()));
+            response.append(String.format(template, t.getId(), t.getProjectId(), t.getPriority(), t.getStatus(),
+                    t.getShortDescription(), t.getFullDescription(), t.getEmployerId()));
         }
         return response.toString();
     }
@@ -118,8 +119,8 @@ public class TicketHandler extends AbstractHandler {
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getImportance(), ticket.getStatus(),
-                ticket.getShortDesctiption(), ticket.getFullDescription(), ticket.getEmployerId());
+        return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getPriority(), ticket.getStatus(),
+                ticket.getShortDescription(), ticket.getFullDescription(), ticket.getEmployerId());
     }
 
     /**
@@ -129,16 +130,17 @@ public class TicketHandler extends AbstractHandler {
      * @return строка с идентификатором созданного тикета
      */
     private String create(Map<String, String> args) {
-        if (args.size() != 5) {
+        if (args.size() != 6) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
         String createdId = ticketService.saveNewTicket(
                         Integer.parseInt(args.get("project_id")),
-                        args.get("importance"),
+                        args.get("priority"),
                         args.get("status"),
                         args.get("short_description"),
-                        args.get("full_description"))
+                        args.get("full_description"),
+                        Integer.parseInt(args.get("employer_id")))
                 .toString();
         return String.format(template, createdId);
     }

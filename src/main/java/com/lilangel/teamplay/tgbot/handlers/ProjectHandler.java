@@ -1,6 +1,7 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
 import com.lilangel.teamplay.exception.ProjectNotFoundException;
+import com.lilangel.teamplay.models.Project;
 import com.lilangel.teamplay.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -86,7 +87,7 @@ public class ProjectHandler extends AbstractHandler {
         StringBuilder response = new StringBuilder("Projects:\n");
         List<Project> projects = projectService.getAll();
         for (Project p : projects) {
-            response.append(String.format(template, p.getId(), p.getName(), p.getTeamId(), p.getDescription));
+            response.append(String.format(template, p.getId(), p.getName(), p.getTeamId(), p.getDescription()));
         }
         return response.toString();
     }
@@ -126,8 +127,8 @@ public class ProjectHandler extends AbstractHandler {
         String template = "Successfully created\nNew project ID: %s";
         String createdId = projectService.saveNewProject(
                         args.get("name"),
-                        Integer.parseInt(args.get("team_id")),
-                        args.get("description"))
+                        args.get("description"),
+                        Integer.parseInt(args.get("team_id")))
                 .toString();
         return String.format(template, createdId);
     }

@@ -126,10 +126,11 @@ class TicketHandlerTest {
     public void createTest() {
         Map<String, String> args = new HashMap<>();
         args.put("project_id", "1");
-        args.put("importance", "High");
+        args.put("priority", "High");
         args.put("status","Open");
         args.put("short_description", "Minor bug");
         args.put("full_description", "Highly important minor bug");
+        args.put("employer_id", "1");
         String response = ticketHandler.requestHandler(CREATE_REQUEST, args);
         assertNotNull(response);
         assertTrue(response.startsWith("Successfully"));

@@ -20,11 +20,11 @@ public class UserController {
     /**
      * Параметр запроса "employerID"
      */
-    private static final String EMPLOYER_ID = "employerID";
+    private static final String EMPLOYER_ID = "employerId";
     /**
      * Параметр запроса "tgID"
      */
-    private static final String TG_ID = "tgID";
+    private static final String TG_ID = "tgId";
     /**
      * Параметр запроса "isAdmin"
      */
@@ -66,16 +66,16 @@ public class UserController {
      * Создает нового пользователя
      *
      * @param employerID Идентификатор сотрудника
-     * @param tgID       ссылка на телеграм
+     * @param tgId       ссылка на телеграм
      * @param isAdmin    является ли данный пользователь админом или нет
      * @return ответ с информацией о всех пользователях и HTTP-статусом 201
      */
     @PostMapping(value = "/create")
     public ResponseEntity<String> create(
             @RequestParam(EMPLOYER_ID) Integer employerID,
-            @RequestParam(TG_ID) String tgID,
+            @RequestParam(TG_ID) Integer tgId,
             @RequestParam(IS_ADMIN) Boolean isAdmin) {
-        Integer createdId = userService.saveNewUser(employerID, tgID, isAdmin);
+        Integer createdId = userService.saveNewUser(employerID, tgId, isAdmin);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 
