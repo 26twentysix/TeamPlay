@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/projects")
-public class ProjectController {
+public class ProjectController extends AbstractController<Project> {
 
     /**
      * Параметр запроса "id"
@@ -46,6 +46,7 @@ public class ProjectController {
      * @return ответ с информацией о проекте и HTTP-статусом 200
      * @throws ProjectNotFoundException если проект с заданным идентификатором не был найден
      */
+    @Override
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<Project> getById(@PathVariable Integer id) throws ProjectNotFoundException {
         Project project = projectService.getById(id);
@@ -57,6 +58,7 @@ public class ProjectController {
      *
      * @return ответ с информацией о всех проектах и HTTP-статусом 200
      */
+    @Override
     @GetMapping(value = "/getall")
     public ResponseEntity<List<Project>> getAll() {
         List<Project> allProjects = projectService.getAll();
@@ -76,7 +78,7 @@ public class ProjectController {
             @RequestParam(NAME) String name,
             @RequestParam(TEAM_ID) Integer teamId,
             @RequestParam(DESCRIPTION) String description) {
-        Integer createdId = projectService.saveNewProject(name, description, teamId);
+        Integer createdId = projectService.create(name, description, teamId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 
@@ -87,6 +89,7 @@ public class ProjectController {
      * @return ответ с HTTP-статусом 200
      * @throws ProjectNotFoundException если проект с заданным идентификатором не был найден
      */
+    @Override
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws ProjectNotFoundException {
         projectService.deleteById(id);
