@@ -63,7 +63,7 @@ public class BotTest {
         Map<String, String> expected = new HashMap<>();
         expected.put("name", "John Doe");
         expected.put("email", "johndoe@test.com");
-        Map<String, String> actual = bot.parseArgs("/command register name=John Doe email=johndoe@test.com");
+        Map<String, String> actual = Bot.parseArgs("/command register name=John Doe email=johndoe@test.com");
         assertEquals(expected, actual);
     }
 }
