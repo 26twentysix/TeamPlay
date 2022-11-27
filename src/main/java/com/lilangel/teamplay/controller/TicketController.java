@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tickets")
-public class TicketController {
+public class TicketController extends AbstractController<Ticket> {
     /**
      * Параметр запроса "id"
      */
@@ -25,10 +25,11 @@ public class TicketController {
     /**
      * Параметр запроса "importance"
      */
-    private static final String IMPORTANCE = "importance";
+    private static final String PRIORITY = "priority";
     /**
      * Параметр запроса "shortDescription"
      */
+    private static final String STATUS = "status";
     private static final String SHORT_DESCRIPTION = "shortDescription";
     /**
      * Параметр запроса "fullDescription"
@@ -53,6 +54,7 @@ public class TicketController {
      * @return ответ с информацией о тикете и HTTP-статусом 200
      * @throws TicketNotFoundException если тикет с заданным идентификатором не был найден
      */
+    @Override
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<Ticket> getById(@PathVariable Integer id) throws TicketNotFoundException {
         Ticket ticket = ticketService.getById(id);
@@ -64,6 +66,7 @@ public class TicketController {
      *
      * @return ответ с информацией о всех тикетах и HTTP-статусом 200
      */
+    @Override
     @GetMapping(value = "/getAll")
     public ResponseEntity<List<Ticket>> getAll() {
         List<Ticket> allTickets = ticketService.getAll();
@@ -74,7 +77,8 @@ public class TicketController {
      * Создает новый тикет
      *
      * @param projectId        идентификатор проекта
-     * @param importance       важность тикета
+     * @param priority         важность тикета
+     * @param status           текущий статус тикета
      * @param shortDescription краткое описание
      * @param fullDescription  полное оаписание
      * @param employerId       идентификатор сотрудника
@@ -83,11 +87,12 @@ public class TicketController {
     @PostMapping(value = "/create")
     public ResponseEntity<String> create(
             @RequestParam(PROJECT_ID) Integer projectId,
-            @RequestParam(IMPORTANCE) String importance,
+            @RequestParam(PRIORITY) String priority,
+            @RequestParam(STATUS) String status,
             @RequestParam(SHORT_DESCRIPTION) String shortDescription,
             @RequestParam(FULL_DESCRIPTION) String fullDescription,
             @RequestParam(EMPLOYER_ID) Integer employerId) {
-        Integer createdId = ticketService.saveNewTicket(projectId, importance,
+        Integer createdId = ticketService.create(projectId, priority, status,
                 shortDescription, fullDescription, employerId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
@@ -99,9 +104,10 @@ public class TicketController {
      * @return ответ с HTTP-статусом 200
      * @throws TicketNotFoundException если сотрудник с заданным идентификатором не был найден
      */
+    @Override
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws TicketNotFoundException {
-        TicketService.deleteById(id);
+        ticketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

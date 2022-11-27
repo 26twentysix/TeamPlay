@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController extends AbstractController<User> {
     /**
      * Параметр запроса "id"
      */
@@ -20,11 +20,11 @@ public class UserController {
     /**
      * Параметр запроса "employerID"
      */
-    private static final String EMPLOYER_ID = "employerID";
+    private static final String EMPLOYER_ID = "employerId";
     /**
      * Параметр запроса "tgID"
      */
-    private static final String TG_ID = "tgID";
+    private static final String TG_ID = "tgId";
     /**
      * Параметр запроса "isAdmin"
      */
@@ -44,6 +44,7 @@ public class UserController {
      * @return ответ с информацией о пользователе и HTTP-статусом 200
      * @throws UserNotFoundException если пользователь с заданным идентификатором не был найден
      */
+    @Override
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<User> getById(@PathVariable Integer id) throws UserNotFoundException {
         User user = userService.getById(id);
@@ -55,6 +56,7 @@ public class UserController {
      *
      * @return ответ с информацией о всех пользователях и HTTP-статусом 200
      */
+    @Override
     @GetMapping(value = "/getAll")
     public ResponseEntity<List<User>> getAll() {
         List<User> allUsers = userService.getAll();
@@ -66,16 +68,16 @@ public class UserController {
      * Создает нового пользователя
      *
      * @param employerID Идентификатор сотрудника
-     * @param tgID       ссылка на телеграм
+     * @param tgId       ссылка на телеграм
      * @param isAdmin    является ли данный пользователь админом или нет
      * @return ответ с информацией о всех пользователях и HTTP-статусом 201
      */
     @PostMapping(value = "/create")
     public ResponseEntity<String> create(
             @RequestParam(EMPLOYER_ID) Integer employerID,
-            @RequestParam(TG_ID) String tgID,
+            @RequestParam(TG_ID) Integer tgId,
             @RequestParam(IS_ADMIN) Boolean isAdmin) {
-        Integer createdId = userService.saveNewUser(employerID, tgID, isAdmin);
+        Integer createdId = userService.create(employerID, tgId, isAdmin);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 
@@ -86,6 +88,7 @@ public class UserController {
      * @return ответ с HTTP-статусом 200
      * @throws UserNotFoundException если пользователь с заданным идентификатором не был найден
      */
+    @Override
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws UserNotFoundException {
         userService.deleteById(id);

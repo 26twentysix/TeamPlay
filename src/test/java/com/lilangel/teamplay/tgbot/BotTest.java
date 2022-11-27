@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,5 +56,14 @@ public class BotTest {
     public void correctInitTest() {
         assertNotNull(bot.getBotToken());
         assertNotNull(bot.getBotUsername());
+    }
+
+    @Test
+    public void argsParseTest() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("name", "John Doe");
+        expected.put("email", "johndoe@test.com");
+        Map<String, String> actual = Bot.parseArgs("/command register name=John Doe email=johndoe@test.com");
+        assertEquals(expected, actual);
     }
 }

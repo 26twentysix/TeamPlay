@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employers")
-public class EmployerController extends AbstractController {
+public class EmployerController extends AbstractController<Employer> {
 
     /**
      * Параметр запроса "id"
@@ -45,6 +45,7 @@ public class EmployerController extends AbstractController {
      * @return ответ с информацией о сотруднике и HTTP-статусом 200
      * @throws EmployerNotFoundException если сотрудник с заданным идентификатором не был найден
      */
+    @Override
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<Employer> getById(@PathVariable Integer id) throws EmployerNotFoundException {
         Employer employer = employerService.getById(id);
@@ -56,6 +57,7 @@ public class EmployerController extends AbstractController {
      *
      * @return ответ с информацией о всех сотрудниках и HTTP-статусом 200
      */
+    @Override
     @GetMapping(value = "/getall")
     public ResponseEntity<List<Employer>> getAll() {
         List<Employer> allEmployers = employerService.getAll();
@@ -76,7 +78,7 @@ public class EmployerController extends AbstractController {
             @RequestParam(NAME) String name,
             @RequestParam(EMAIL) String email,
             @RequestParam(TEAM_ID) Integer teamId) {
-        Integer createdId = employerService.saveNewEmployer(name, email, teamId);
+        Integer createdId = employerService.create(name, email, teamId);
         return new ResponseEntity<>(createdId.toString(), HttpStatus.CREATED);
     }
 
@@ -87,6 +89,7 @@ public class EmployerController extends AbstractController {
      * @return ответ с HTTP-статусом 200
      * @throws EmployerNotFoundException если сотрудник с заданным идентификатором не был найден
      */
+    @Override
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws EmployerNotFoundException {
         employerService.deleteById(id);
