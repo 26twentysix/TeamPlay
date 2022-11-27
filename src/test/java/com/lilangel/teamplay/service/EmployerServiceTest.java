@@ -27,12 +27,12 @@ public class EmployerServiceTest {
     }
 
     /**
-     * Тестирует метод {@link EmployerServiceImpl#saveNewEmployer(String, String, Integer)}
+     * Тестирует метод {@link EmployerServiceImpl#create(String, String, Integer)}
      * Метод проходит проверку, если возвращается идентификатор созданного сотрудника
      */
     @Test
     public void saveNewEmployerTest() {
-        Integer createdId = employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
+        Integer createdId = employerService.create("John Doe", "johndoe@test.com", 1);
         assertNotNull(createdId);
     }
 
@@ -45,7 +45,7 @@ public class EmployerServiceTest {
      */
     @Test
     public void deleteByIdTest() throws EmployerNotFoundException {
-        Integer createdId = employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
+        Integer createdId = employerService.create("John Doe", "johndoe@test.com", 1);
         employerService.deleteById(createdId);
         assertThrows(EmployerNotFoundException.class, () -> employerService.getById(createdId));
     }
@@ -57,7 +57,7 @@ public class EmployerServiceTest {
      */
     @Test
     public void deleteByWrongIdTest() {
-        Integer createdId = employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
+        Integer createdId = employerService.create("John Doe", "johndoe@test.com", 1);
         assertThrows(EmployerNotFoundException.class, () -> employerService.deleteById(createdId + 1));
     }
 
@@ -67,8 +67,8 @@ public class EmployerServiceTest {
      */
     @Test
     public void getAllTest() {
-        employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
-        employerService.saveNewEmployer("Jane Doe", "janedoe@test.com", 1);
+        employerService.create("John Doe", "johndoe@test.com", 1);
+        employerService.create("Jane Doe", "janedoe@test.com", 1);
         List<Employer> employers = employerService.getAll();
         assertNotNull(employers);
     }
@@ -80,7 +80,7 @@ public class EmployerServiceTest {
      */
     @Test
     public void getByIdTest() throws EmployerNotFoundException {
-        Integer createdId = employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
+        Integer createdId = employerService.create("John Doe", "johndoe@test.com", 1);
         employerService.getById(createdId);
     }
 
@@ -91,7 +91,7 @@ public class EmployerServiceTest {
      */
     @Test
     public void getByWrongIdTest() {
-        Integer createdId = employerService.saveNewEmployer("John Doe", "johndoe@test.com", 1);
+        Integer createdId = employerService.create("John Doe", "johndoe@test.com", 1);
         assertThrows(EmployerNotFoundException.class, () -> employerService.getById(createdId + 1));
     }
 }

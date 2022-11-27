@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer saveNewUser(Integer tgId, Integer employerId, Boolean isAdmin) {
+    public Integer create(Integer tgId, Integer employerId, Boolean isAdmin) {
         User user = new User(tgId, employerId, isAdmin);
         userRepository.save(user);
         return user.getId();

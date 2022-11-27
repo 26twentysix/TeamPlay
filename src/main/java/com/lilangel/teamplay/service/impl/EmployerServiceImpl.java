@@ -22,7 +22,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public Integer saveNewEmployer(String name, String email, Integer teamId) {
+    public Integer create(String name, String email, Integer teamId) {
         Employer employer = new Employer(name, email, teamId);
         employerRepository.save(employer);
         return employer.getId();

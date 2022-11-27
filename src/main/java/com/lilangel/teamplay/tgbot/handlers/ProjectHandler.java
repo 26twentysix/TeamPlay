@@ -48,6 +48,7 @@ public class ProjectHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/project"
      *
      * @param request строка сообщения
+     * @param args аргументы
      * @return строка ответа
      */
     @Override
@@ -77,7 +78,7 @@ public class ProjectHandler extends AbstractHandler {
     /**
      * Возвращает информацию о всех проектах
      *
-     * @param args аргоументы
+     * @param args аргументы
      * @return строка с информацией о всех проектах
      */
     private String getAll(Map<String, String> args) {
@@ -129,7 +130,7 @@ public class ProjectHandler extends AbstractHandler {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew project ID: %s";
-        String createdId = projectService.saveNewProject(
+        String createdId = projectService.create(
                         args.get("name"),
                         args.get("description"),
                         Integer.parseInt(args.get("team_id")))

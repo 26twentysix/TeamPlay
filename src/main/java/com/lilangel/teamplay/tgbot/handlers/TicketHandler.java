@@ -17,10 +17,10 @@ public class TicketHandler extends AbstractHandler {
     private final String HELP_MESSAGE = """
             /ticket Help:
                 `/ticket help` - print this message
-                `/ticket get_all` - get all employers
-                `/ticket get_by_id id={id}` - get employer by id
+                `/ticket get_all` - get all tickets
+                `/ticket get_by_id id={id}` - get ticket by id
                 `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new employer
-                `/ticket delete_by_id id={id}` - delete employer""";
+                `/ticket delete_by_id id={id}` - delete ticket""";
 
     /**
      * Сообщение о том, что команда не существует
@@ -48,7 +48,7 @@ public class TicketHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/ticket"
      *
      * @param request строка сообщения
-     * @param args
+     * @param args аргументы
      * @return строка ответа
      */
     @Override
@@ -136,7 +136,7 @@ public class TicketHandler extends AbstractHandler {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
-        String createdId = ticketService.saveNewTicket(Integer.parseInt(args.get("project_id")), args.get("priority"), args.get("status"), args.get("short_description"), args.get("full_description"), Integer.parseInt(args.get("employer_id"))).toString();
+        String createdId = ticketService.create(Integer.parseInt(args.get("project_id")), args.get("priority"), args.get("status"), args.get("short_description"), args.get("full_description"), Integer.parseInt(args.get("employer_id"))).toString();
         return String.format(template, createdId);
     }
 

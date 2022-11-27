@@ -14,7 +14,7 @@ public interface UserService {
      * @param isAdmin    является ли пользователь админом
      * @return ответ с идентификатором пользователя
      */
-    Integer saveNewUser(Integer tgId, Integer employerId, Boolean isAdmin);
+    Integer create(Integer tgId, Integer employerId, Boolean isAdmin);
 
     /**
      * Удаляет пользователя по идентификатору

@@ -22,7 +22,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Integer saveNewProject(String name, String description, Integer teamId) {
+    public Integer create(String name, String description, Integer teamId) {
         Project project = new Project(name, description, teamId);
         projectRepository.save(project);
         return project.getId();

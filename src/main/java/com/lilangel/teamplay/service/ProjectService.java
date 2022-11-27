@@ -14,7 +14,7 @@ public interface ProjectService {
      * @param teamId      идентификатор команды
      * @return ответ с идентификатором проекта
      */
-    Integer saveNewProject(String name, String description, Integer teamId);
+    Integer create(String name, String description, Integer teamId);
 
     /**
      * Удаляет проект по идентификатору

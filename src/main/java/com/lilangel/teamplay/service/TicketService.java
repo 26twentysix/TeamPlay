@@ -2,7 +2,6 @@ package com.lilangel.teamplay.service;
 
 import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.models.Ticket;
-import com.lilangel.teamplay.models.User;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public interface TicketService {
      * @param employerId       идентификатор админа
      * @return ответ с идентификатором тикета
      */
-    Integer saveNewTicket(Integer projectId, String priority, String status, String shortDescription, String fullDescription, Integer employerId);
+    Integer create(Integer projectId, String priority, String status, String shortDescription, String fullDescription, Integer employerId);
 
     /**
      * Удаляет тикет по идентификатору

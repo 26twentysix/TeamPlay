@@ -22,7 +22,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Integer saveNewTeam(String name, Integer leadId) {
+    public Integer create(String name, Integer leadId) {
         Team team = new Team(name, leadId);
         teamRepository.save(team);
         return team.getId();

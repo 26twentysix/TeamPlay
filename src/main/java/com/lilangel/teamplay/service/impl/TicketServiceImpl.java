@@ -22,8 +22,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Integer saveNewTicket(Integer projectId, String priority, String status, String shortDescription,
-                                 String fullDescription, Integer employerId) {
+    public Integer create(Integer projectId, String priority, String status, String shortDescription,
+                          String fullDescription, Integer employerId) {
         Ticket ticket = new Ticket(projectId, priority, status, shortDescription, fullDescription, employerId);
         ticketRepository.save(ticket);
         return ticket.getId();

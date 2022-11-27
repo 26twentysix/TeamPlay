@@ -15,7 +15,7 @@ public interface EmployerService {
      * @param teamId идентификатор команды
      * @return ответ с личным идентификатором сотрудника
      */
-    Integer saveNewEmployer(String name, String email, Integer teamId);
+    Integer create(String name, String email, Integer teamId);
 
     /**
      * Удаляет сотрудника по идентификатору

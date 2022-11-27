@@ -12,7 +12,7 @@ public interface TeamService {
      * @param leadId идентификатор тимлида
      * @return ответ с идентификатором команды
      */
-    Integer saveNewTeam(String name, Integer leadId);
+    Integer create(String name, Integer leadId);
 
     /**
      * Удаляет команду по идентификатору

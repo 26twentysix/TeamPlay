@@ -51,7 +51,7 @@ public class EmployerHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/employer"
      *
      * @param request строка сообщения
-     * @param args
+     * @param args аргументы
      * @return строка ответа
      */
     @Override
@@ -133,7 +133,7 @@ public class EmployerHandler extends AbstractHandler {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew employer ID: %s";
-        String createdId = employerService.saveNewEmployer(
+        String createdId = employerService.create(
                         args.get("name"),
                         args.get("email"),
                         Integer.parseInt(args.get("team_id")))

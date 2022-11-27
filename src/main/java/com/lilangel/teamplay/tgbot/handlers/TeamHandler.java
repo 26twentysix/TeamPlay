@@ -128,7 +128,7 @@ public class TeamHandler extends AbstractHandler{
             return "Wrong args number";
         }
         String template = "Successfully created\nNew team ID: %s";
-        String createdId = teamService.saveNewTeam(
+        String createdId = teamService.create(
                         args.get("name"),
                         Integer.parseInt(args.get("lead_id")))
                 .toString();
