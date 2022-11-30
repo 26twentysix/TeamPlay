@@ -26,7 +26,10 @@ public class TicketHandler extends AbstractHandler {
      * Сообщение о том, что команда не существует
      */
     private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/ticket help` to get available commands";
-
+    /**
+     * Количество аргументов, требуемое для создания тикета
+     */
+    private final Integer ARGS_COUNT_TO_CREATE = 6;
     private final TicketService ticketService;
 
     /**
@@ -37,7 +40,7 @@ public class TicketHandler extends AbstractHandler {
     @Autowired
     public TicketHandler(TicketService ticketService) {
         this.ticketService = ticketService;
-        handlers.put("help", this::helpMessage);
+        handlers.put("help", this::help);
         handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
@@ -48,7 +51,7 @@ public class TicketHandler extends AbstractHandler {
      * Базовый обработчик для сообщений, начинающихся с "/ticket"
      *
      * @param request строка сообщения
-     * @param args аргументы
+     * @param args    аргументы
      * @return строка ответа
      */
     @Override
@@ -64,15 +67,25 @@ public class TicketHandler extends AbstractHandler {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
-        return WRONG_COMMAND_MESSAGE;
+        return getWrongCommandMessage();
+    }
+
+    @Override
+    protected String getHelpMessage() {
+        return HELP_MESSAGE;
     }
 
     /**
-     * @param args список аргументов
-     * @return строка справки
+     * @return сообщение о неверной команде
      */
-    private String helpMessage(Map<String, String> args) {
-        return HELP_MESSAGE;
+    @Override
+    protected String getWrongCommandMessage() {
+        return WRONG_COMMAND_MESSAGE;
+    }
+
+    @Override
+    protected String help(Map<String, String> args) {
+        return getHelpMessage();
     }
 
     /**
@@ -81,7 +94,8 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех тикетах
      */
-    private String getAll(Map<String, String> args) {
+    @Override
+    protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tProject ID: %d
@@ -106,7 +120,8 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о тикете
      */
-    private String getById(Map<String, String> args) {
+    @Override
+    protected String getById(Map<String, String> args) {
         String template = """
                 Ticket:
                     ID: %d
@@ -131,8 +146,9 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с идентификатором созданного тикета
      */
-    private String create(Map<String, String> args) {
-        if (args.size() != 6) {
+    @Override
+    protected String create(Map<String, String> args) {
+        if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
@@ -146,8 +162,8 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с результатом
      */
-
-    private String deleteById(Map<String, String> args) {
+    @Override
+    protected String deleteById(Map<String, String> args) {
         try {
             ticketService.deleteById(Integer.parseInt(args.get("id")));
         } catch (TicketNotFoundException e) {

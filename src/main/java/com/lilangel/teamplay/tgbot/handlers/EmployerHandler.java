@@ -19,17 +19,15 @@ public class EmployerHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /employer Help:
-                `/employer help` - print this message
-                `/employer get_all` - get all employers
-                `/employer get_by_id id={id}` - get employer by id
-                `/employer create name={name} email={email} team_id={team_id}` - create new employer
-                `/employer delete_by_id id={id}` - delete employer""";
+    private final String HELP_MESSAGE;
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/employer help` to get available commands";
+    private final String WRONG_COMMAND_MESSAGE;
+    /**
+     * Количество аргументов, требуемое для создания работника
+     */
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final EmployerService employerService;
 
     /**
@@ -40,42 +38,56 @@ public class EmployerHandler extends AbstractHandler {
     @Autowired
     public EmployerHandler(EmployerService employerService) {
         this.employerService = employerService;
-        handlers.put("help", this::helpMessage);
+        handlers.put("help", this::help);
         handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/employer help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 3;
+        HELP_MESSAGE = """
+                /employer Help:
+                    `/employer help` - print this message
+                    `/employer get_all` - get all employers
+                    `/employer get_by_id id={id}` - get employer by id
+                    `/employer create name={name} email={email} team_id={team_id}` - create new employer
+                    `/employer delete_by_id id={id}` - delete employer""";
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/employer"
      *
-     * @param request строка сообщения
-     * @param args аргументы
+     * @param command команда
+     * @param args    аргументы
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
-        return WRONG_COMMAND_MESSAGE;
+        return getWrongCommandMessage();
     }
 
     /**
-     * @param args список аргументов
-     * @return строка справки
+     * @return сообщение с справкой
      */
-    private String helpMessage(Map<String, String> args) {
+    @Override
+    protected String getHelpMessage() {
         return HELP_MESSAGE;
+    }
+
+    /**
+     * @return сообщение о неверной команде
+     */
+    @Override
+    protected String getWrongCommandMessage() {
+        return WRONG_COMMAND_MESSAGE;
+    }
+
+    @Override
+    protected String help(Map<String, String> args) {
+        return getHelpMessage();
     }
 
     /**
@@ -84,13 +96,14 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех сотрудниках
      */
-    private String getAll(Map<String, String> args) {
+    @Override
+    protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
                 \t\t\t\tE-mail: %s
                 \t\t\t\tTeam ID: %d
-                
+                                
                 """;
         StringBuilder response = new StringBuilder("Employers:\n");
         List<Employer> employers = employerService.getAll();
@@ -106,7 +119,8 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о сотруднике
      */
-    private String getById(Map<String, String> args) {
+    @Override
+    protected String getById(Map<String, String> args) {
         String template = """
                 Employer:
                     ID: %d
@@ -128,8 +142,9 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с идентификатором созданного сотрудника
      */
-    private String create(Map<String, String> args) {
-        if (args.size() != 3) {
+    @Override
+    protected String create(Map<String, String> args) {
+        if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew employer ID: %s";
@@ -147,8 +162,8 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с результатом
      */
-
-    private String deleteById(Map<String, String> args) {
+    @Override
+    protected String deleteById(Map<String, String> args) {
         try {
             employerService.deleteById(Integer.parseInt(args.get("id")));
         } catch (EmployerNotFoundException e) {
