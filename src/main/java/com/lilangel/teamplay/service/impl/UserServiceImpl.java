@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("User with given ID was not found.");
+            throw new UserNotFoundException();
         }
     }
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             return user.get();
         } else {
-            throw new UserNotFoundException("User with given ID was not found.");
+            throw new UserNotFoundException();
         }
     }
 

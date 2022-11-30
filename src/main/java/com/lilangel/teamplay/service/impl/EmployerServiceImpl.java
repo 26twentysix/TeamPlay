@@ -33,7 +33,7 @@ public class EmployerServiceImpl implements EmployerService {
         try {
             employerRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EmployerNotFoundException("Employer with given ID was not found.");
+            throw new EmployerNotFoundException();
         }
     }
 
@@ -43,7 +43,7 @@ public class EmployerServiceImpl implements EmployerService {
         if (employer.isPresent()) {
             return employer.get();
         } else {
-            throw new EmployerNotFoundException("Employer with given ID was not found.");
+            throw new EmployerNotFoundException();
         }
     }
 

@@ -34,7 +34,7 @@ public class TicketServiceImpl implements TicketService {
         try {
             ticketRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new TicketNotFoundException("Ticket with given ID was not found.");
+            throw new TicketNotFoundException();
         }
     }
 
@@ -44,7 +44,7 @@ public class TicketServiceImpl implements TicketService {
         if (ticket.isPresent()) {
             return ticket.get();
         } else {
-            throw new TicketNotFoundException("Ticket with given ID was not found.");
+            throw new TicketNotFoundException();
         }
     }
 
