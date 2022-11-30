@@ -6,7 +6,7 @@ package com.lilangel.teamplay.exception;
  */
 public class EmployerNotFoundException extends OurNotFoundException {
 
-    public EmployerNotFoundException(String message) {
-        super(message);
+    public EmployerNotFoundException() {
+        super("Employer with given ID was not found.");
     }
 }

@@ -1,7 +1,7 @@
 package com.lilangel.teamplay.exception;
 
 public class TeamNotFoundException extends OurNotFoundException {
-    public TeamNotFoundException(String message) {
-        super(message);
+    public TeamNotFoundException() {
+        super("Team with given ID was not found.");
     }
 }
