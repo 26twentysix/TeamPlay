@@ -6,7 +6,7 @@ import com.lilangel.teamplay.models.Team;
 import java.util.List;
 public interface TeamService {
     /**
-     * Добавляет новую команду
+     * Создает новую команду
      *
      * @param name   название команды
      * @param leadId идентификатор тимлида

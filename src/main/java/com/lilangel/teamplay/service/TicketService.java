@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TicketService {
     /**
-     * Добавляет нового пользователя
+     * Создает нового пользователя
      *
      * @param projectId        идентификатор проекта
      * @param priority         приоритет тикета
