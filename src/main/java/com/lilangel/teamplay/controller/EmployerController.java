@@ -15,10 +15,6 @@ import java.util.List;
 public class EmployerController extends AbstractController<Employer> {
 
     /**
-     * Параметр запроса "id"
-     */
-    private static final String ID = "id";
-    /**
      * Параметр запроса "name"
      */
     private static final String NAME = "name";
@@ -46,7 +42,7 @@ public class EmployerController extends AbstractController<Employer> {
      * @throws EmployerNotFoundException если сотрудник с заданным идентификатором не был найден
      */
     @Override
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Employer> getById(@PathVariable Integer id) throws EmployerNotFoundException {
         Employer employer = employerService.getById(id);
         return new ResponseEntity<>(employer, HttpStatus.OK);
@@ -58,7 +54,7 @@ public class EmployerController extends AbstractController<Employer> {
      * @return ответ с информацией о всех сотрудниках и HTTP-статусом 200
      */
     @Override
-    @GetMapping(value = "/getall")
+    @GetMapping(value = "/")
     public ResponseEntity<List<Employer>> getAll() {
         List<Employer> allEmployers = employerService.getAll();
         return new ResponseEntity<>(allEmployers, HttpStatus.OK);
@@ -73,7 +69,7 @@ public class EmployerController extends AbstractController<Employer> {
      * @param teamId Идентификатор команды
      * @return ответ с информацией о всех сотрудниках и HTTP-статусом 201
      */
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/")
     public ResponseEntity<String> create(
             @RequestParam(NAME) String name,
             @RequestParam(EMAIL) String email,
@@ -90,7 +86,7 @@ public class EmployerController extends AbstractController<Employer> {
      * @throws EmployerNotFoundException если сотрудник с заданным идентификатором не был найден
      */
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws EmployerNotFoundException {
         employerService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
