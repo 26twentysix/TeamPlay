@@ -94,7 +94,7 @@ public class Bot extends TelegramLongPollingBot {
             }
             if (handlers.containsKey(command.substring(1) + "Handler")) {
                 AbstractHandler handler = handlers.get(command.substring(1) + "Handler");
-                return handler.requestHandler(message, parseArgs(message));
+                return handler.requestHandler(getCommand(message), parseArgs(message));
             }
         }
         return WRONG_COMMAND_MESSAGE;
@@ -120,6 +120,16 @@ public class Bot extends TelegramLongPollingBot {
             args.put(argName, arg);
         }
         return args;
+    }
+
+    public static String getCommand(String message) {
+        int indexOfSpace = message.indexOf(" ");
+        if (indexOfSpace == -1) {
+            return "help";
+        } else {
+            var parsed = message.split(" ");
+            return parsed[1];
+        }
     }
 
     @PostConstruct
