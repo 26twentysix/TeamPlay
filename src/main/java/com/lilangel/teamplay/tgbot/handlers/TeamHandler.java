@@ -14,22 +14,16 @@ public class TeamHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /team Help:
-                `/team help` - print this message
-                `/team get_all` - get all teams
-                `/team get_by_id id={id}` - get team by id
-                `/team create name={name} lead_id={lead_id}` - create new team
-                `/team delete_by_id id={id}` - delete team""";
+    private final String HELP_MESSAGE;
 
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/team help` to get available commands";
+    private final String WRONG_COMMAND_MESSAGE;
     /**
      * Количество аргументов, требуемое для создания команды
      */
-    private final Integer ARGS_COUNT_TO_CREATE = 2;
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final TeamService teamService;
 
     /**
@@ -45,25 +39,26 @@ public class TeamHandler extends AbstractHandler {
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        HELP_MESSAGE = """
+                /team Help:
+                    `/team help` - print this message
+                    `/team get_all` - get all teams
+                    `/team get_by_id id={id}` - get team by id
+                    `/team create name={name} lead_id={lead_id}` - create new team
+                    `/team delete_by_id id={id}` - delete team""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/team help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 2;
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/team"
      *
-     * @param request строка сообщения
+     * @param command команда
      * @param args    аргументы команды
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }

@@ -14,22 +14,16 @@ public class TicketHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /ticket Help:
-                `/ticket help` - print this message
-                `/ticket get_all` - get all tickets
-                `/ticket get_by_id id={id}` - get ticket by id
-                `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new employer
-                `/ticket delete_by_id id={id}` - delete ticket""";
+    private final String HELP_MESSAGE;
 
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/ticket help` to get available commands";
+    private final String WRONG_COMMAND_MESSAGE;
     /**
      * Количество аргументов, требуемое для создания тикета
      */
-    private final Integer ARGS_COUNT_TO_CREATE = 6;
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final TicketService ticketService;
 
     /**
@@ -45,25 +39,26 @@ public class TicketHandler extends AbstractHandler {
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        HELP_MESSAGE = """
+                /ticket Help:
+                    `/ticket help` - print this message
+                    `/ticket get_all` - get all tickets
+                    `/ticket get_by_id id={id}` - get ticket by id
+                    `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new employer
+                    `/ticket delete_by_id id={id}` - delete ticket""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/ticket help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 6;
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/ticket"
      *
-     * @param request строка сообщения
+     * @param command команда
      * @param args    аргументы
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }

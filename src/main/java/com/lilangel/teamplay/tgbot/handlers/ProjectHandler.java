@@ -14,22 +14,16 @@ public class ProjectHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /project Help:
-                `/project help` - print this message
-                `/project get_all` - get all projects
-                `/project get_by_id id={id}` - get project by id
-                `/project create name={name} description={description} team_id={team_id}` - create new project
-                `/project delete_by_id id={id}` - delete project""";
+    private final String HELP_MESSAGE;
 
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/project help` to get available commands";
+    private final String WRONG_COMMAND_MESSAGE;
     /**
      * Количество аргументов, требуемое для создания проекта
      */
-    private final Integer ARGS_COUNT_TO_CREATE = 3;
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final ProjectService projectService;
 
     /**
@@ -45,25 +39,26 @@ public class ProjectHandler extends AbstractHandler {
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        HELP_MESSAGE = """
+                /project Help:
+                    `/project help` - print this message
+                    `/project get_all` - get all projects
+                    `/project get_by_id id={id}` - get project by id
+                    `/project create name={name} description={description} team_id={team_id}` - create new project
+                    `/project delete_by_id id={id}` - delete project""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/project help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 3;
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/project"
      *
-     * @param request строка сообщения
+     * @param command команда
      * @param args    аргументы
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
