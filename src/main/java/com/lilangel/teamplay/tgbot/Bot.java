@@ -20,15 +20,13 @@ public class Bot extends TelegramLongPollingBot {
     /**
      * Сообщение, если команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/help` to get bot available commands";
+    private final String WRONG_COMMAND_MESSAGE;
 
     /**
      * Справка
      */
     //TODO Написать справку
-    private final String HELP_MESSAGE = """
-            Bot Help:
-                This is bot help message""";
+    private final String HELP_MESSAGE;
 
     Map<String, AbstractHandler> handlers = new HashMap<>();
 
@@ -40,6 +38,10 @@ public class Bot extends TelegramLongPollingBot {
         handlers.put("teamHandler", teamHandler);
         handlers.put("ticketHandler", ticketHandler);
         handlers.put("userHandler", userHandler);
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/help` to get bot available commands";
+        HELP_MESSAGE = """
+                Bot Help:
+                    This is bot help message""";
     }
 
     @Value("${bot.username}")
@@ -122,6 +124,11 @@ public class Bot extends TelegramLongPollingBot {
         return args;
     }
 
+    /**
+     * Извлекает команду из сообщения
+     * @param message сообщение
+     * @return команда
+     */
     public static String getCommand(String message) {
         int indexOfSpace = message.indexOf(" ");
         if (indexOfSpace == -1) {
