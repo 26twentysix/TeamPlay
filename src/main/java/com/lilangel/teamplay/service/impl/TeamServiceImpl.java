@@ -33,7 +33,7 @@ public class TeamServiceImpl implements TeamService {
         try {
             teamRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new TeamNotFoundException("Team with given ID was not found.");
+            throw new TeamNotFoundException();
         }
     }
 
@@ -43,7 +43,7 @@ public class TeamServiceImpl implements TeamService {
         if (team.isPresent()) {
             return team.get();
         } else {
-            throw new TeamNotFoundException("Team with given ID was not found.");
+            throw new TeamNotFoundException();
         }
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProjectService {
     /**
-     * Добавляет новый проект
+     * Создает новый проект
      *
      * @param name        название проекта
      * @param description описание

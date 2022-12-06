@@ -14,19 +14,16 @@ public class ProjectHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /project Help:
-                `/project help` - print this message
-                `/project get_all` - get all projects
-                `/project get_by_id id={id}` - get project by id
-                `/project create name={name} description={description} team_id={team_id}` - create new project
-                `/project delete_by_id id={id}` - delete project""";
+    private final String HELP_MESSAGE;
 
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/project help` to get available commands";
-
+    private final String WRONG_COMMAND_MESSAGE;
+    /**
+     * Количество аргументов, требуемое для создания проекта
+     */
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final ProjectService projectService;
 
     /**
@@ -37,42 +34,53 @@ public class ProjectHandler extends AbstractHandler {
     @Autowired
     public ProjectHandler(ProjectService projectService) {
         this.projectService = projectService;
-        handlers.put("help", this::helpMessage);
+        handlers.put("help", this::help);
         handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        HELP_MESSAGE = """
+                /project Help:
+                    `/project help` - print this message
+                    `/project get_all` - get all projects
+                    `/project get_by_id id={id}` - get project by id
+                    `/project create name={name} description={description} team_id={team_id}` - create new project
+                    `/project delete_by_id id={id}` - delete project""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/project help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 3;
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/project"
      *
-     * @param request строка сообщения
-     * @param args аргументы
+     * @param command команда
+     * @param args    аргументы
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
-        return WRONG_COMMAND_MESSAGE;
+        return getWrongCommandMessage();
+    }
+
+    @Override
+    protected String getHelpMessage() {
+        return HELP_MESSAGE;
     }
 
     /**
-     * @param args аргументы
-     * @return строка справки
+     * @return сообщение о неверной команде
      */
-    private String helpMessage(Map<String, String> args) {
-        return HELP_MESSAGE;
+    @Override
+    protected String getWrongCommandMessage() {
+        return WRONG_COMMAND_MESSAGE;
+    }
+
+    @Override
+    protected String help(Map<String, String> args) {
+        return getHelpMessage();
     }
 
     /**
@@ -81,13 +89,14 @@ public class ProjectHandler extends AbstractHandler {
      * @param args аргументы
      * @return строка с информацией о всех проектах
      */
-    private String getAll(Map<String, String> args) {
+    @Override
+    protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
                 \t\t\t\tTeam ID: %d
                 \t\t\t\tDescription: %s
-                
+                                
                 """;
         StringBuilder response = new StringBuilder("Projects:\n");
         List<Project> projects = projectService.getAll();
@@ -103,7 +112,8 @@ public class ProjectHandler extends AbstractHandler {
      * @param args аргументы
      * @return строка с информацией о проекте
      */
-    private String getById(Map<String, String> args) {
+    @Override
+    protected String getById(Map<String, String> args) {
         String template = """
                 Project:
                     ID: %d
@@ -125,8 +135,9 @@ public class ProjectHandler extends AbstractHandler {
      * @param args аргументы
      * @return строка с идентификатором созданного проекта
      */
-    private String create(Map<String, String> args) {
-        if (args.size() != 3) {
+    @Override
+    protected String create(Map<String, String> args) {
+        if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew project ID: %s";
@@ -144,8 +155,8 @@ public class ProjectHandler extends AbstractHandler {
      * @param args аргументы
      * @return строка с результатом
      */
-
-    private String deleteById(Map<String, String> args) {
+    @Override
+    protected String deleteById(Map<String, String> args) {
         try {
             projectService.deleteById(Integer.parseInt(args.get("id")));
         } catch (ProjectNotFoundException e) {

@@ -13,10 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tickets")
 public class TicketController extends AbstractController<Ticket> {
-    /**
-     * Параметр запроса "id"
-     */
-    private static final String ID = "id";
+
     /**
      * Параметр запроса "projectID"
      */
@@ -55,7 +52,7 @@ public class TicketController extends AbstractController<Ticket> {
      * @throws TicketNotFoundException если тикет с заданным идентификатором не был найден
      */
     @Override
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Ticket> getById(@PathVariable Integer id) throws TicketNotFoundException {
         Ticket ticket = ticketService.getById(id);
         return new ResponseEntity<>(ticket, HttpStatus.OK);
@@ -67,7 +64,7 @@ public class TicketController extends AbstractController<Ticket> {
      * @return ответ с информацией о всех тикетах и HTTP-статусом 200
      */
     @Override
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/")
     public ResponseEntity<List<Ticket>> getAll() {
         List<Ticket> allTickets = ticketService.getAll();
         return new ResponseEntity<>(allTickets, HttpStatus.OK);
@@ -84,7 +81,7 @@ public class TicketController extends AbstractController<Ticket> {
      * @param employerId       идентификатор сотрудника
      * @return ответ с информацией о всех тикетах и HTTP-статусом 201
      */
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/")
     public ResponseEntity<String> create(
             @RequestParam(PROJECT_ID) Integer projectId,
             @RequestParam(PRIORITY) String priority,
@@ -105,7 +102,7 @@ public class TicketController extends AbstractController<Ticket> {
      * @throws TicketNotFoundException если сотрудник с заданным идентификатором не был найден
      */
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws TicketNotFoundException {
         ticketService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

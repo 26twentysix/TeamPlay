@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserService {
     /**
-     * Добавляет нового пользователя
+     * Создает нового пользователя
      *
      * @param tgId       описание
      * @param employerId идентификатор сотрудника

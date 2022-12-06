@@ -1,7 +1,7 @@
 package com.lilangel.teamplay.exception;
 
 public class TicketNotFoundException extends OurNotFoundException {
-    public TicketNotFoundException(String message) {
-            super(message);
+    public TicketNotFoundException() {
+            super("Ticket with given ID was not found.");
         }
 }

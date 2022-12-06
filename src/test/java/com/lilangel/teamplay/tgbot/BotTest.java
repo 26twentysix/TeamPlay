@@ -58,12 +58,27 @@ public class BotTest {
         assertNotNull(bot.getBotUsername());
     }
 
+    /**
+     * Тестирует метод {@link Bot#parseArgs(String)}
+     * Тест проходится, если из сообщения корректно извлекаются аргументы {"name": "John Doe", "email": "johndoe@test.com"}
+     */
     @Test
     public void argsParseTest() {
         Map<String, String> expected = new HashMap<>();
         expected.put("name", "John Doe");
         expected.put("email", "johndoe@test.com");
-        Map<String, String> actual = Bot.parseArgs("/command register name=John Doe email=johndoe@test.com");
+        Map<String, String> actual = bot.parseArgs("/command register name=John Doe email=johndoe@test.com");
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Тестирует метод {@link Bot#getCommand(String)}
+     * Тест проходится, если из сообщения корректно извлекается команда get_all
+     */
+    @Test
+    public void getCommandTest() {
+        String expected = "get_all";
+        String actual = bot.getCommand("/command get_all some=args");
         assertEquals(expected, actual);
     }
 }

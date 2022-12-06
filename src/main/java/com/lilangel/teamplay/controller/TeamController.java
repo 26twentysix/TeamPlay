@@ -15,10 +15,6 @@ import java.util.List;
 public class TeamController extends AbstractController<Team> {
 
     /**
-     * Параметр запроса "id"
-     */
-    private static final String ID = "id";
-    /**
      * Параметр запроса "name"
      */
     private static final String NAME = "name";
@@ -42,7 +38,7 @@ public class TeamController extends AbstractController<Team> {
      * @throws TeamNotFoundException если команда с заданным идентификатором не была найдена
      */
     @Override
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Team> getById(@PathVariable Integer id) throws TeamNotFoundException {
         Team team = teamService.getById(id);
         return new ResponseEntity<>(team, HttpStatus.OK);
@@ -54,7 +50,7 @@ public class TeamController extends AbstractController<Team> {
      * @return ответ с информацией о всех командах и HTTP-статусом 200
      */
     @Override
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/")
     public ResponseEntity<List<Team>> getAll() {
         List<Team> allTeams = teamService.getAll();
         return new ResponseEntity<>(allTeams, HttpStatus.OK);
@@ -67,7 +63,7 @@ public class TeamController extends AbstractController<Team> {
      * @param leadID Идентификатор лидера команды
      * @return ответ с информацией о всех командах и HTTP-статусом 201
      */
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/")
     public ResponseEntity<String> create(
             @RequestParam(NAME) String name,
             @RequestParam(LEAD_ID) Integer leadID) {
@@ -83,7 +79,7 @@ public class TeamController extends AbstractController<Team> {
      * @throws TeamNotFoundException если команда с заданным идентификатором не была найдена
      */
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws TeamNotFoundException {
         teamService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -11,4 +11,39 @@ public class UserHandler extends AbstractHandler {
     public String requestHandler(String message, Map<String, String> args) {
         return null;
     }
+
+    @Override
+    protected String getHelpMessage() {
+        return null;
+    }
+
+    @Override
+    protected String getWrongCommandMessage() {
+        return null;
+    }
+
+    @Override
+    protected String help(Map<String, String> args) {
+        return null;
+    }
+
+    @Override
+    protected String getAll(Map<String, String> args) {
+        return null;
+    }
+
+    @Override
+    protected String getById(Map<String, String> args) {
+        return null;
+    }
+
+    @Override
+    protected String create(Map<String, String> args) {
+        return null;
+    }
+
+    @Override
+    protected String deleteById(Map<String, String> args) {
+        return null;
+    }
 }

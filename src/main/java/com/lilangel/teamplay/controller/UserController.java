@@ -13,10 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController<User> {
-    /**
-     * Параметр запроса "id"
-     */
-    private static final String ID = "id";
+
     /**
      * Параметр запроса "employerID"
      */
@@ -45,7 +42,7 @@ public class UserController extends AbstractController<User> {
      * @throws UserNotFoundException если пользователь с заданным идентификатором не был найден
      */
     @Override
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<User> getById(@PathVariable Integer id) throws UserNotFoundException {
         User user = userService.getById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -57,7 +54,7 @@ public class UserController extends AbstractController<User> {
      * @return ответ с информацией о всех пользователях и HTTP-статусом 200
      */
     @Override
-    @GetMapping(value = "/getAll")
+    @GetMapping(value = "/")
     public ResponseEntity<List<User>> getAll() {
         List<User> allUsers = userService.getAll();
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
@@ -72,7 +69,7 @@ public class UserController extends AbstractController<User> {
      * @param isAdmin    является ли данный пользователь админом или нет
      * @return ответ с информацией о всех пользователях и HTTP-статусом 201
      */
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/")
     public ResponseEntity<String> create(
             @RequestParam(EMPLOYER_ID) Integer employerID,
             @RequestParam(TG_ID) Integer tgId,
@@ -89,7 +86,7 @@ public class UserController extends AbstractController<User> {
      * @throws UserNotFoundException если пользователь с заданным идентификатором не был найден
      */
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws UserNotFoundException {
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -8,7 +8,7 @@ import java.util.List;
 public interface EmployerService {
 
     /**
-     * Добавляет нового сотрудника
+     * Создает нового сотрудника
      *
      * @param name   имя и фамилия сотрудника
      * @param email  адрес электронной почты

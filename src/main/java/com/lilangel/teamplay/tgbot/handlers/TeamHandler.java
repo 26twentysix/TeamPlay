@@ -10,23 +10,20 @@ import java.util.*;
 import java.util.function.Function;
 
 @Component
-public class TeamHandler extends AbstractHandler{
+public class TeamHandler extends AbstractHandler {
     /**
      * Справка
      */
-    private final String HELP_MESSAGE = """
-            /team Help:
-                `/team help` - print this message
-                `/team get_all` - get all teams
-                `/team get_by_id id={id}` - get team by id
-                `/team create name={name} lead_id={lead_id}` - create new team
-                `/team delete_by_id id={id}` - delete team""";
+    private final String HELP_MESSAGE;
 
     /**
      * Сообщение о том, что команда не существует
      */
-    private final String WRONG_COMMAND_MESSAGE = "Wrong command, try `/team help` to get available commands";
-
+    private final String WRONG_COMMAND_MESSAGE;
+    /**
+     * Количество аргументов, требуемое для создания команды
+     */
+    private final Integer ARGS_COUNT_TO_CREATE;
     private final TeamService teamService;
 
     /**
@@ -37,42 +34,53 @@ public class TeamHandler extends AbstractHandler{
     @Autowired
     public TeamHandler(TeamService teamService) {
         this.teamService = teamService;
-        handlers.put("help", this::helpMessage);
+        handlers.put("help", this::help);
         handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
+        HELP_MESSAGE = """
+                /team Help:
+                    `/team help` - print this message
+                    `/team get_all` - get all teams
+                    `/team get_by_id id={id}` - get team by id
+                    `/team create name={name} lead_id={lead_id}` - create new team
+                    `/team delete_by_id id={id}` - delete team""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/team help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 2;
     }
 
     /**
      * Базовый обработчик для сообщений, начинающихся с "/team"
      *
-     * @param request строка сообщения
-     * @param args аргументы команды
+     * @param command команда
+     * @param args    аргументы команды
      * @return строка ответа
      */
     @Override
-    public String requestHandler(String request, Map<String, String> args) {
-        String command;
-        int indexOfSpace = request.indexOf(" ");
-        if (indexOfSpace == -1) {
-            command = "help";
-        } else {
-            var parsed = request.split(" ");
-            command = parsed[1];
-        }
+    public String requestHandler(String command, Map<String, String> args) {
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
-        return WRONG_COMMAND_MESSAGE;
+        return getWrongCommandMessage();
+    }
+
+    @Override
+    protected String getHelpMessage() {
+        return HELP_MESSAGE;
     }
 
     /**
-     * @param args аргументы
-     * @return строка справки
+     * @return сообщение о неверной команде
      */
-    private String helpMessage(Map<String, String> args) {
-        return HELP_MESSAGE;
+    @Override
+    protected String getWrongCommandMessage() {
+        return WRONG_COMMAND_MESSAGE;
+    }
+
+    @Override
+    protected String help(Map<String, String> args) {
+        return getHelpMessage();
     }
 
     /**
@@ -81,12 +89,13 @@ public class TeamHandler extends AbstractHandler{
      * @param args аргументы
      * @return строка с информацией о всех проектах
      */
-    private String getAll(Map<String, String> args) {
+    @Override
+    protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
                 \t\t\t\tLead ID: %d
-                
+                                
                 """;
         StringBuilder response = new StringBuilder("Teams:\n");
         List<Team> teams = teamService.getAll();
@@ -102,7 +111,8 @@ public class TeamHandler extends AbstractHandler{
      * @param args аргументы
      * @return строка с информацией о команде
      */
-    private String getById(Map<String, String> args) {
+    @Override
+    protected String getById(Map<String, String> args) {
         String template = """
                 Team:
                     ID: %d
@@ -123,8 +133,9 @@ public class TeamHandler extends AbstractHandler{
      * @param args аргументы
      * @return строка с идентификатором созданной команды
      */
-    private String create(Map<String, String> args) {
-        if (args.size() != 2) {
+    @Override
+    protected String create(Map<String, String> args) {
+        if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew team ID: %s";
@@ -141,8 +152,8 @@ public class TeamHandler extends AbstractHandler{
      * @param args аргументы
      * @return строка с результатом
      */
-
-    private String deleteById(Map<String, String> args) {
+    @Override
+    protected String deleteById(Map<String, String> args) {
         try {
             teamService.deleteById(Integer.parseInt(args.get("id")));
         } catch (TeamNotFoundException e) {

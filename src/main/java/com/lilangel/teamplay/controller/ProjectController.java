@@ -15,10 +15,6 @@ import java.util.List;
 public class ProjectController extends AbstractController<Project> {
 
     /**
-     * Параметр запроса "id"
-     */
-    private static final String ID = "id";
-    /**
      * Параметр запроса "name"
      */
     private static final String NAME = "name";
@@ -47,7 +43,7 @@ public class ProjectController extends AbstractController<Project> {
      * @throws ProjectNotFoundException если проект с заданным идентификатором не был найден
      */
     @Override
-    @GetMapping(value = "/get/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<Project> getById(@PathVariable Integer id) throws ProjectNotFoundException {
         Project project = projectService.getById(id);
         return new ResponseEntity<>(project, HttpStatus.OK);
@@ -59,7 +55,7 @@ public class ProjectController extends AbstractController<Project> {
      * @return ответ с информацией о всех проектах и HTTP-статусом 200
      */
     @Override
-    @GetMapping(value = "/getall")
+    @GetMapping(value = "/")
     public ResponseEntity<List<Project>> getAll() {
         List<Project> allProjects = projectService.getAll();
         return new ResponseEntity<>(allProjects, HttpStatus.OK);
@@ -73,7 +69,7 @@ public class ProjectController extends AbstractController<Project> {
      * @param description описание проекта
      * @return ответ с информацией о всех проектах и HTTP-статусом 201
      */
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/")
     public ResponseEntity<String> create(
             @RequestParam(NAME) String name,
             @RequestParam(TEAM_ID) Integer teamId,
@@ -90,7 +86,7 @@ public class ProjectController extends AbstractController<Project> {
      * @throws ProjectNotFoundException если проект с заданным идентификатором не был найден
      */
     @Override
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Integer id) throws ProjectNotFoundException {
         projectService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,6 +1,5 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
-import com.lilangel.teamplay.tgbot.Bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,9 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class EmployerHandlerTest {
     /**
-     * Запрос на создание сотрудника
+     * Аргументы для создания сотрудника
      */
-    private final String CREATE_REQUEST = "/employers create name=John Doe email=johndoe@test.com team_id=1";
+    private final Map<String, String> CREATE_ARGS = Map.of(
+            "name", "John Doe",
+            "email", "johndoe@test.com",
+            "team_id", "1");
 
     private final EmployerHandler employerHandler;
 
@@ -36,8 +38,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void getHelpMessageTest() {
-        String request = "/employers help";
-        String response = employerHandler.requestHandler(request, new HashMap<>());
+        String response = employerHandler.requestHandler("help", new HashMap<>());
         assertTrue(response.startsWith("/employer Help:"));
     }
 
@@ -48,8 +49,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void wrongCommandTest() {
-        String request = "/employers wrong";
-        String response = employerHandler.requestHandler(request, new HashMap<>());
+        String response = employerHandler.requestHandler("wrong", new HashMap<>());
         assertTrue(response.startsWith("Wrong command"));
     }
 
@@ -60,26 +60,23 @@ class EmployerHandlerTest {
      */
     @Test
     public void getAllTest() {
-        String request = "/employers get_all";
-        employerHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
-        String response = employerHandler.requestHandler(request, new HashMap<>());
+        String response = employerHandler.requestHandler("get_all", new HashMap<>());
         assertNotNull(response);
         assertTrue(response.startsWith("Employers:"));
     }
 
     /**
      * Тестирует метод {@link EmployerHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "get_by_id"
+     * с запросом, содержащим команду "get_by_id id={previouslyCreatedId}"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Employer:"
      */
     @Test
     public void getByIdTest() {
-        String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
+        String createdId = employerHandler.requestHandler("create", CREATE_ARGS);
         var parsedResp = createdId.split(" ");
-        String request = "/employers get_by_id " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
-        String response = employerHandler.requestHandler(request, args);
+        String response = employerHandler.requestHandler("get_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Employer:"));
     }
@@ -91,12 +88,11 @@ class EmployerHandlerTest {
      */
     @Test
     public void deleteByIdTest() {
-        String createdId = employerHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
+        String createdId = employerHandler.requestHandler("create", CREATE_ARGS);
         var parsedResp = createdId.split(" ");
-        String request = "/employers delete_by_id " + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
-        String response = employerHandler.requestHandler(request, args);
+        String response = employerHandler.requestHandler("delete_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Successfully"));
     }
@@ -108,10 +104,9 @@ class EmployerHandlerTest {
      */
     @Test
     public void deleteByWrongIdTest() {
-        String request = "/employers delete_by_id -1";
         Map<String, String> args = new HashMap<>();
         args.put("id", "-1");
-        String response = employerHandler.requestHandler(request, args);
+        String response = employerHandler.requestHandler("delete_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Employer with given ID"));
     }
@@ -123,11 +118,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void createTest() {
-        Map<String, String> args = new HashMap<>();
-        args.put("name", "John Doe");
-        args.put("email", "johndoe@test.com");
-        args.put("team_id", "1");
-        String response = employerHandler.requestHandler(CREATE_REQUEST, args);
+        String response = employerHandler.requestHandler("create", CREATE_ARGS);
         assertNotNull(response);
         assertTrue(response.startsWith("Successfully"));
     }
@@ -139,7 +130,7 @@ class EmployerHandlerTest {
      */
     @Test
     public void createWithWrongArgsNum() {
-        String response = employerHandler.requestHandler("/employers create", new HashMap<>());
+        String response = employerHandler.requestHandler("create", new HashMap<>());
         assertNotNull(response);
         System.out.println(response);
         assertTrue(response.startsWith("Wrong args"));
