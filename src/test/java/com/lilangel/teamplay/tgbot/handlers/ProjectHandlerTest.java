@@ -1,6 +1,5 @@
 package com.lilangel.teamplay.tgbot.handlers;
 
-import com.lilangel.teamplay.tgbot.Bot;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,9 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class ProjectHandlerTest {
     /**
-     * Запрос на создание проекта
+     * Аргументы для создания проекта
      */
-    private final String CREATE_REQUEST = "/project create name=NewProject team_id=2 description=New Project";
+    private final Map<String, String> CREATE_ARGS = Map.of(
+            "name", "New Project",
+            "team_id", "2",
+            "description", "New Description");
 
     private final ProjectHandler projectHandler;
 
@@ -36,8 +38,7 @@ class ProjectHandlerTest {
      */
     @Test
     public void getHelpMessageTest() {
-        String request = "/project help";
-        String response = projectHandler.requestHandler(request, new HashMap<>());
+        String response = projectHandler.requestHandler("help", new HashMap<>());
         assertTrue(response.startsWith("/project Help:"));
     }
 
@@ -48,8 +49,7 @@ class ProjectHandlerTest {
      */
     @Test
     public void wrongCommandTest() {
-        String request = "/project wrong";
-        String response = projectHandler.requestHandler(request, new HashMap<>());
+        String response = projectHandler.requestHandler("wrong", new HashMap<>());
         assertTrue(response.startsWith("Wrong command"));
     }
 
@@ -60,26 +60,23 @@ class ProjectHandlerTest {
      */
     @Test
     public void getAllTest() {
-        String request = "/project get_all";
-        projectHandler.requestHandler(CREATE_REQUEST, new HashMap<>());
-        String response = projectHandler.requestHandler(request, new HashMap<>());
+        String response = projectHandler.requestHandler("get_all", new HashMap<>());
         assertNotNull(response);
         assertTrue(response.startsWith("Projects:"));
     }
 
     /**
      * Тестирует метод {@link ProjectHandler#requestHandler(String, java.util.Map)}
-     * с запросом, содержащим команду "get_by_id"
+     * с запросом, содержащим команду "get_by_id id={previously_created_id}"
      * Метод проходит проверку, если возрвращается непустой ответ, начинающийся с "Project:"
      */
     @Test
     public void getByIdTest() {
-        String createdId = projectHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
+        String createdId = projectHandler.requestHandler("create", CREATE_ARGS);
         var parsedResp = createdId.split(" ");
-        String request = "/project get_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
-        String response = projectHandler.requestHandler(request, args);
+        String response = projectHandler.requestHandler("get_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Project:"));
     }
@@ -91,12 +88,11 @@ class ProjectHandlerTest {
      */
     @Test
     public void deleteByIdTest() {
-        String createdId = projectHandler.requestHandler(CREATE_REQUEST, Bot.parseArgs(CREATE_REQUEST));
+        String createdId = projectHandler.requestHandler("create", CREATE_ARGS);
         var parsedResp = createdId.split(" ");
-        String request = "/project delete_by_id id=" + parsedResp[parsedResp.length - 1];
         Map<String, String> args = new HashMap<>();
         args.put("id", parsedResp[parsedResp.length - 1]);
-        String response = projectHandler.requestHandler(request, args);
+        String response = projectHandler.requestHandler("delete_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Successfully"));
     }
@@ -108,10 +104,9 @@ class ProjectHandlerTest {
      */
     @Test
     public void deleteByWrongIdTest() {
-        String request = "/project delete_by_id id=-1";
         Map<String, String> args = new HashMap<>();
         args.put("id", "-1");
-        String response = projectHandler.requestHandler(request, args);
+        String response = projectHandler.requestHandler("delete_by_id", args);
         assertNotNull(response);
         assertTrue(response.startsWith("Project with given ID"));
     }
@@ -123,11 +118,7 @@ class ProjectHandlerTest {
      */
     @Test
     public void createTest() {
-        Map<String, String> args = new HashMap<>();
-        args.put("name", "NewProject");
-        args.put("team_id", "2");
-        args.put("description", "New Project");
-        String response = projectHandler.requestHandler(CREATE_REQUEST, args);
+        String response = projectHandler.requestHandler("create", CREATE_ARGS);
         assertNotNull(response);
         assertTrue(response.startsWith("Successfully"));
     }
@@ -139,9 +130,8 @@ class ProjectHandlerTest {
      */
     @Test
     public void createWithWrongArgsNum() {
-        String response = projectHandler.requestHandler("/project create", new HashMap<>());
+        String response = projectHandler.requestHandler("create", new HashMap<>());
         assertNotNull(response);
-        System.out.println(response);
         assertTrue(response.startsWith("Wrong args"));
     }
 
