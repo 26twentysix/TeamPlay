@@ -1,5 +1,7 @@
 package com.lilangel.teamplay.tgbot;
 
+import com.lilangel.teamplay.models.User;
+import com.lilangel.teamplay.service.impl.UserServiceImpl;
 import com.lilangel.teamplay.tgbot.handlers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,32 +18,15 @@ import java.util.*;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
-
-    /**
-     * Сообщение, если команда не существует
-     */
-    private final String WRONG_COMMAND_MESSAGE;
-
-    /**
-     * Справка
-     */
-    //TODO Написать справку
-    private final String HELP_MESSAGE;
-
     Map<String, AbstractHandler> handlers = new HashMap<>();
 
+    private final UserServiceImpl userService;
+
     @Autowired
-    public Bot(EmployerHandler employerHandler, ProjectHandler projectHandler, TeamHandler teamHandler,
-               TicketHandler ticketHandler, UserHandler userHandler) {
-        handlers.put("employerHandler", employerHandler);
-        handlers.put("projectHandler", projectHandler);
-        handlers.put("teamHandler", teamHandler);
-        handlers.put("ticketHandler", ticketHandler);
-        handlers.put("userHandler", userHandler);
-        WRONG_COMMAND_MESSAGE = "Wrong command, try `/help` to get bot available commands";
-        HELP_MESSAGE = """
-                Bot Help:
-                    This is bot help message""";
+    public Bot(AdminHandler adminHandler, DefaultUserHandler defaultUserHandler, UserServiceImpl userService) {
+        handlers.put("adminHandler", adminHandler);
+        handlers.put("defaultUserHandler", defaultUserHandler);
+        this.userService = userService;
     }
 
     @Value("${bot.username}")
@@ -65,7 +50,7 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(messageHandler(update.getMessage().getText()));
+            message.setText(messageHandler(update.getMessage().getText(), update.getMessage().getFrom().getId()));
             message.setParseMode("Markdown");
             try {
                 execute(message);
@@ -81,29 +66,21 @@ public class Bot extends TelegramLongPollingBot {
      * @param message строка сообщения
      * @return строка ответа
      */
-    public String messageHandler(String message) {
-        if (Objects.equals(message, "/help")) {
-            return HELP_MESSAGE;
+    public String messageHandler(String message, Long tgId) {
+        //TODO Блок с проверкой на аутентификацию
+        User currentUser = userService.getByTgId(tgId);
+        AbstractHandler handler;
+        if (currentUser.getIsAdmin()) {
+            handler = handlers.get("adminHandler");
+        } else {
+            handler = handlers.get("defaultUserHandler");
         }
-        String command;
-        if (message.startsWith("/")) {
-            int indexOfSpace = message.indexOf(" ");
-            if (indexOfSpace == -1) {
-                command = message;
-            } else {
-                var parsed = message.split(" ");
-                command = parsed[0];
-            }
-            if (handlers.containsKey(command.substring(1) + "Handler")) {
-                AbstractHandler handler = handlers.get(command.substring(1) + "Handler");
-                return handler.requestHandler(getCommand(message), parseArgs(message));
-            }
-        }
-        return WRONG_COMMAND_MESSAGE;
+        return handler.requestHandler(message, parseArgs(message));
     }
 
     /**
      * Извлекает из сообщения аргументы команды
+     *
      * @param message сообщение, из которого нужно извлечь аргументы команды
      * @return Словарь вида paramName : paramValue
      */
@@ -114,10 +91,9 @@ public class Bot extends TelegramLongPollingBot {
             String argName = splittedArgs.get(i).substring(splittedArgs.get(i).lastIndexOf(" ") + 1);
             String arg;
             if (i != splittedArgs.size() - 2) {
-                arg = splittedArgs.get(i+1).substring(0, splittedArgs.get(i+1).lastIndexOf(" "));
-            }
-            else {
-                arg = splittedArgs.get(i+1);
+                arg = splittedArgs.get(i + 1).substring(0, splittedArgs.get(i + 1).lastIndexOf(" "));
+            } else {
+                arg = splittedArgs.get(i + 1);
             }
             args.put(argName, arg);
         }
@@ -126,6 +102,7 @@ public class Bot extends TelegramLongPollingBot {
 
     /**
      * Извлекает команду из сообщения
+     *
      * @param message сообщение
      * @return команда
      */
