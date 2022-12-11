@@ -1,5 +1,6 @@
-package com.lilangel.teamplay.tgbot.handlers;
+package com.lilangel.teamplay.tgbot.handlers.admins;
 
+import com.lilangel.teamplay.tgbot.handlers.AbstractHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -24,26 +25,6 @@ public class UserHandler extends AbstractHandler {
 
     @Override
     protected String help(Map<String, String> args) {
-        return null;
-    }
-
-    @Override
-    protected String getAll(Map<String, String> args) {
-        return null;
-    }
-
-    @Override
-    protected String getById(Map<String, String> args) {
-        return null;
-    }
-
-    @Override
-    protected String create(Map<String, String> args) {
-        return null;
-    }
-
-    @Override
-    protected String deleteById(Map<String, String> args) {
         return null;
     }
 }

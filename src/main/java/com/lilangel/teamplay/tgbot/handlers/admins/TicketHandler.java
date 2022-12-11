@@ -1,8 +1,9 @@
-package com.lilangel.teamplay.tgbot.handlers;
+package com.lilangel.teamplay.tgbot.handlers.admins;
 
 import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.service.TicketService;
+import com.lilangel.teamplay.tgbot.handlers.AbstractHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -89,7 +90,6 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех тикетах
      */
-    @Override
     protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
@@ -115,7 +115,6 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о тикете
      */
-    @Override
     protected String getById(Map<String, String> args) {
         String template = """
                 Ticket:
@@ -141,7 +140,6 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с идентификатором созданного тикета
      */
-    @Override
     protected String create(Map<String, String> args) {
         if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
@@ -157,7 +155,6 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с результатом
      */
-    @Override
     protected String deleteById(Map<String, String> args) {
         try {
             ticketService.deleteById(Integer.parseInt(args.get("id")));
