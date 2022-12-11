@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer create(Integer tgId, Integer employerId, Boolean isAdmin) {
+    public Integer create(Long tgId, Integer employerId, Boolean isAdmin) {
         User user = new User(tgId, employerId, isAdmin);
         userRepository.save(user);
         return user.getId();
@@ -52,5 +52,13 @@ public class UserServiceImpl implements UserService {
         List<User> users = new ArrayList<>();
         userRepository.findAll().forEach(users::add);
         return users;
+    }
+
+    public boolean isAuthorized(Long tgId) {
+        return userRepository.existsByTgId(tgId);
+    }
+
+    public User getByTgId(Long tgId) {
+        return userRepository.getUserByTgId(tgId);
     }
 }
