@@ -1,4 +1,4 @@
-package com.lilangel.teamplay.tgbot.handlers;
+package com.lilangel.teamplay.tgbot.handlers.admins;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Класс юнит-тестов для {@link EmployerHandler}
+ * Класс юнит-тестов для {@link TicketHandler}
  */
 @SpringBootTest
 @Transactional
