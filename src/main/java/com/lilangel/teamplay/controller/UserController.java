@@ -71,7 +71,7 @@ public class UserController extends AbstractController<User> {
      */
     @PostMapping(value = "/")
     public ResponseEntity<String> create(
-            @RequestParam(EMPLOYER_ID) Integer employerID,
+            @RequestParam(EMPLOYER_ID) Long employerID,
             @RequestParam(TG_ID) Integer tgId,
             @RequestParam(IS_ADMIN) Boolean isAdmin) {
         Integer createdId = userService.create(employerID, tgId, isAdmin);
