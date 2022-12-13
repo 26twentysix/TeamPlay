@@ -39,5 +39,4 @@ public interface UserService {
      * @return ответ с информацией обо всех пользователях
      */
     List<User> getAll();
-
 }
