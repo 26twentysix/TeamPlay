@@ -6,7 +6,6 @@ import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.models.User;
 import com.lilangel.teamplay.repository.TicketRepository;
 import com.lilangel.teamplay.repository.UserRepository;
-import com.lilangel.teamplay.service.DefaultUserService;
 import com.lilangel.teamplay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService, DefaultUserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
 
@@ -68,7 +67,6 @@ public class UserServiceImpl implements UserService, DefaultUserService {
         return userRepository.getUserByTgId(tgId);
     }
 
-
     @Override
     public void changeInfo(Integer ticketId, String... newInfo) throws TicketNotFoundException {
         Optional<Ticket> ticket = ticketRepository.findById(ticketId);
@@ -91,17 +89,6 @@ public class UserServiceImpl implements UserService, DefaultUserService {
             chosenTicket.setEmployerId(getByTgId(tgId).getEmployerId());
         } else {
             throw new UserNotFoundException();
-        }
-    }
-
-    @Override
-    public void changeTicketState(Integer ticketId, String status) throws TicketNotFoundException {
-        Optional<Ticket> ticket = ticketRepository.findById(ticketId);
-        if (ticket.isPresent()) {
-            Ticket chosenTicket = ticket.get();
-            chosenTicket.setStatus(status);
-        } else {
-            throw new TicketNotFoundException();
         }
     }
 }
