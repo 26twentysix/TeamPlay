@@ -42,5 +42,8 @@ public interface TicketService {
      * @return ответ с информацией обо всех тикетах
      */
     List<Ticket> getAll();
+
+    void changeTicketState(Integer ticketId, String status) throws TicketNotFoundException;
+
 }
 
