@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.service;
 
+import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.exception.UserNotFoundException;
 import com.lilangel.teamplay.models.User;
 
@@ -39,4 +40,8 @@ public interface UserService {
      * @return ответ с информацией обо всех пользователях
      */
     List<User> getAll();
+
+    void changeInfo(Integer ticketId, String... newInfo) throws TicketNotFoundException;
+
+    void pickUpTicket(Integer ticketId, Long tgId) throws UserNotFoundException;
 }
