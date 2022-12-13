@@ -4,6 +4,7 @@ import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.repository.TicketRepository;
 import com.lilangel.teamplay.service.TicketService;
+import com.lilangel.teamplay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -53,5 +54,14 @@ public class TicketServiceImpl implements TicketService {
         List<Ticket> tickets = new ArrayList<>();
         ticketRepository.findAll().forEach(tickets::add);
         return tickets;
+    }
+
+    public List<Ticket> viewTickets() {
+        return getAll();
+    }
+
+    public Integer createTicket(Integer projectId, String priority, String status, String shortDescription,
+                                String fullDescription, Integer employerId){
+        return create(projectId, priority, status,  shortDescription, fullDescription, employerId);
     }
 }
