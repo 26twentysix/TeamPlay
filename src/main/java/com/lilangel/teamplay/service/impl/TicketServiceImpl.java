@@ -56,12 +56,23 @@ public class TicketServiceImpl implements TicketService {
         return tickets;
     }
 
+    @Override
+    public void changeTicketState(Integer ticketId, String status) throws TicketNotFoundException {
+        Optional<Ticket> ticket = ticketRepository.findById(ticketId);
+        if (ticket.isPresent()) {
+            Ticket chosenTicket = ticket.get();
+            chosenTicket.setStatus(status);
+        } else {
+            throw new TicketNotFoundException();
+        }
+    }
+
     public List<Ticket> viewTickets() {
         return getAll();
     }
 
     public Integer createTicket(Integer projectId, String priority, String status, String shortDescription,
-                                String fullDescription, Integer employerId){
-        return create(projectId, priority, status,  shortDescription, fullDescription, employerId);
+                                String fullDescription, Integer employerId) {
+        return create(projectId, priority, status, shortDescription, fullDescription, employerId);
     }
 }
