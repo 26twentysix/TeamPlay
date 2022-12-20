@@ -13,10 +13,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String generatePass(boolean isAdmin) {
-        int passwordLen = 15;
+        int passwordLen = 8;
 
         if (isAdmin) {
-            passwordLen = 8;
+            passwordLen = 15;
         }
 
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -42,11 +42,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Boolean isValid(String password) {
-        Instant expiresAt = passwords.get(password);
-        Boolean expirationStatus = Instant.now().isAfter(expiresAt);
+        if (passwords.containsKey(password)) {
+            Instant expiresAt = passwords.get(password);
+            Boolean expirationStatus = Instant.now().isAfter(expiresAt);
 
-        passwords.remove(password);
+            passwords.remove(password);
 
-        return expirationStatus;
+            return expirationStatus;
+        } else {
+            return false;
+        }
     }
 }
