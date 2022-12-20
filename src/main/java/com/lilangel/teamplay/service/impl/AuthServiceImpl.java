@@ -41,14 +41,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Boolean isValid(String password) {
+    public boolean isValid(String password) {
         if (passwords.containsKey(password)) {
             Instant expiresAt = passwords.get(password);
-            Boolean expirationStatus = Instant.now().isAfter(expiresAt);
+            boolean expirationStatus = Instant.now().isAfter(expiresAt);
 
             passwords.remove(password);
 
-            return expirationStatus;
+            return !expirationStatus;
         } else {
             return false;
         }

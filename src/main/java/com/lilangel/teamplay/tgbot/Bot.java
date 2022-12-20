@@ -94,6 +94,18 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
+
+    /**
+     * Проверяет валидность переданного пароля. Если пароль присутствует в хранилище и не истёк,
+     * создаётся профиль работника с соответствующим длине пароля (8 - пользователь, 15 - админ) статусом
+     *
+     * @param tgId идентификатор пользователя в телеграм
+     * @param name имя работника
+     * @param email электронная почта работника
+     * @param teamId идентификатор команды
+     * @param password пароль для аутентификации
+     * @return сообщение с результатом аутентификации
+     */
     public String auth(Long tgId, String name, String email, Integer teamId, String password) {
         if (authService.isValid(password)) {
             Integer employerId = employerService.create(name, email, teamId);
