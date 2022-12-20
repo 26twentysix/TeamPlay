@@ -19,5 +19,5 @@ public interface AuthService {
      * @param password пароль
      * @return ответ со статусом пароля (истёк или нет)
      */
-    Boolean isValid(String password);
+    boolean isValid(String password);
 }
