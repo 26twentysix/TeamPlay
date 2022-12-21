@@ -40,8 +40,4 @@ public interface UserService {
      * @return ответ с информацией обо всех пользователях
      */
     List<User> getAll();
-
-    void changeInfo(Integer ticketId, String... newInfo) throws TicketNotFoundException;
-
-    void pickUpTicket(Integer ticketId, Long tgId) throws UserNotFoundException;
 }
