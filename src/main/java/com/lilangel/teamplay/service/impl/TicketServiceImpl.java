@@ -55,7 +55,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException {
+    public Ticket updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException {
         Optional<Ticket> ticket = ticketRepository.findById(ticketId);
         if (ticket.isPresent()) {
             Ticket chosenTicket = ticket.get();
@@ -66,12 +66,14 @@ public class TicketServiceImpl implements TicketService {
             map.put("status", chosenTicket::setStatus);
             for (String command : map.keySet()) {
                 if (args.get(command) != null) {
-                    map.get(command).accept(command);
+                    map.get(command).accept(args.get(command));
                 }
             }
             if (args.get("employer_id") != null) {
                 chosenTicket.setEmployerId(Integer.parseInt(args.get("employer_id")));
             }
+            ticketRepository.save(chosenTicket);
+            return chosenTicket;
         } else {
             throw new TicketNotFoundException();
         }
