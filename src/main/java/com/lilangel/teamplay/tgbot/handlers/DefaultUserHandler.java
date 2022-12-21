@@ -18,7 +18,7 @@ public class DefaultUserHandler extends AbstractHandler {
 
     private final String WRONG_COMMAND_MESSAGE;
 
-    private Integer ARGS_COUNT_TO_CREATE;
+    private final Integer ARGS_COUNT_TO_CREATE;
 
     private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
@@ -26,7 +26,6 @@ public class DefaultUserHandler extends AbstractHandler {
 
     @Autowired
     public DefaultUserHandler(TicketService ticketService) {
-        handlers.put("help", this::help);
         this.ticketService = ticketService;
         WRONG_COMMAND_MESSAGE = "Default user wrong command msg";
         handlers.put("help", this::help);
@@ -35,18 +34,18 @@ public class DefaultUserHandler extends AbstractHandler {
         handlers.put("change_ticket_info", this::changeTicketInfo);
         handlers.put("pick_up_ticket", this::pickUpTicket);
         HELP_MESSAGE = """
-                /user Help:
-                    `/user help` - print this message
-                    `/user change_info ticket_Id={ticket_Id} args = {args}` - change info by ticket_id
-                    `/user view_tickets` - view all tickets
-                    `/user create ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new ticket
-                    `/user pick_up_ticket ticket_id={ticket_id}` - pick up ticket
-                    """;
+                /Help:
+                    `/help` - print this message
+                    `/change_ticket_info` ticket_Id={ticket_Id} args = {args} - change info by ticket_id
+                    `/view_tickets` - view all tickets
+                    `/create_ticket project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new ticket
+                    `/pick_up_ticket` ticket_id={ticket_id} - pick up ticket""";
         ARGS_COUNT_TO_CREATE = 6;
     }
 
     @Override
-    public String requestHandler(String command, Map<String, String> args) {
+    public String requestHandler(String message, Map<String, String> args) {
+        String command = extractFirstWord(message);
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
@@ -98,8 +97,8 @@ public class DefaultUserHandler extends AbstractHandler {
         newArgs.put("priority", args.get("priority"));
         newArgs.put("short_description", args.get("short_description"));
         try {
-            ticket = ticketService.getById(Integer.parseInt(args.get("id")));
-            ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
+            ticket = ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
+
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
@@ -111,12 +110,20 @@ public class DefaultUserHandler extends AbstractHandler {
         try {
             HashMap<String, String> newArgs = new HashMap<>();
             newArgs.put("status", "picked_up");
-            newArgs.put("employer_id", args.get("tg_id"));
             ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
         return String.format(template, args.get("id"));
+    }
+
+    private String extractFirstWord(String message) {
+        int indexOfSpace = message.indexOf(" ");
+        if (indexOfSpace == -1) {
+            return message.substring(1);
+        } else {
+            return message.substring(1, indexOfSpace);
+        }
     }
 
     @Override
