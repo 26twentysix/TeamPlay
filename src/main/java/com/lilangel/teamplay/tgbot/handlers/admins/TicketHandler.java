@@ -90,7 +90,7 @@ public class TicketHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех тикетах
      */
-    protected String getAll(Map<String, String> args) {
+    public  String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tProject ID: %d
