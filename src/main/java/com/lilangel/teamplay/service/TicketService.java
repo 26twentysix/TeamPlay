@@ -4,6 +4,7 @@ import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.models.Ticket;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TicketService {
     /**
@@ -43,7 +44,7 @@ public interface TicketService {
      */
     List<Ticket> getAll();
 
-    void changeTicketState(Integer ticketId, String status) throws TicketNotFoundException;
+    void updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException;
 
 }
 
