@@ -31,7 +31,8 @@ public class AdminHandler extends AbstractHandler {
         entities.add("ticket");
         entities.add("project");
         entities.add("employer");
-        HELP_MESSAGE = "Admin help message";
+        HELP_MESSAGE = """
+                admin help message""";
         WRONG_COMMAND_MESSAGE = "Admin wrong command message";
     }
 

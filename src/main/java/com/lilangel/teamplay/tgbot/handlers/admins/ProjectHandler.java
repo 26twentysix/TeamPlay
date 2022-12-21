@@ -144,6 +144,9 @@ public class ProjectHandler extends AbstractHandler {
                         args.get("description"),
                         Integer.parseInt(args.get("team_id")))
                 .toString();
+        if (Integer.parseInt(createdId) == -1) {
+            return "There is no team with this id. Check the list of teams using `/team get_all` and try again";
+        }
         return String.format(template, createdId);
     }
 

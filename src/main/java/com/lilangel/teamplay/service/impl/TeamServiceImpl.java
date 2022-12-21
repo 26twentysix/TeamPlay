@@ -1,7 +1,9 @@
 package com.lilangel.teamplay.service.impl;
 
 import com.lilangel.teamplay.exception.TeamNotFoundException;
+import com.lilangel.teamplay.models.Employer;
 import com.lilangel.teamplay.models.Team;
+import com.lilangel.teamplay.repository.EmployerRepository;
 import com.lilangel.teamplay.repository.TeamRepository;
 import com.lilangel.teamplay.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +17,23 @@ import java.util.Optional;
 @Service
 public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
+    private final EmployerRepository employerRepository;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository teamRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository, EmployerRepository employerRepository) {
         this.teamRepository = teamRepository;
+        this.employerRepository = employerRepository;
     }
 
     @Override
     public Integer create(String name, Integer leadId) {
-        Team team = new Team(name, leadId);
-        teamRepository.save(team);
-        return team.getId();
+        Optional<Employer> lead = employerRepository.findById(leadId);
+        if (lead.isPresent()) {
+            Team team = new Team(name, lead.get());
+            teamRepository.save(team);
+            return team.getId();
+        }
+        return -1;
     }
 
     @Override

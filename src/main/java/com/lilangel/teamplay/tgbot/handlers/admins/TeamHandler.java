@@ -141,6 +141,9 @@ public class TeamHandler extends AbstractHandler {
                         args.get("name"),
                         Integer.parseInt(args.get("lead_id")))
                 .toString();
+        if (Integer.parseInt(createdId) == -1) {
+            return "There is no employer with this id. Check the list of employers using `/employer get_all` and try again";
+        }
         return String.format(template, createdId);
     }
 

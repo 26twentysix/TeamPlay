@@ -34,12 +34,12 @@ public class DefaultUserHandler extends AbstractHandler {
         handlers.put("change_ticket_info", this::changeTicketInfo);
         handlers.put("pick_up_ticket", this::pickUpTicket);
         HELP_MESSAGE = """
-                /Help:
+                /help:
                     `/help` - print this message
-                    `/change_ticket_info` ticket_Id={ticket_Id} args = {args} - change info by ticket_id
+                    `/change_ticket_info ticket_id={ticket_id} args = {args}` - change info by ticket id
                     `/view_tickets` - view all tickets
                     `/create_ticket project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new ticket
-                    `/pick_up_ticket` ticket_id={ticket_id} - pick up ticket""";
+                    `/pick_up_ticket ticket_id={ticket_id}` - pick up ticket""";
         ARGS_COUNT_TO_CREATE = 6;
     }
 
@@ -57,7 +57,12 @@ public class DefaultUserHandler extends AbstractHandler {
             return "Wrong args number";
         }
         String template = "Successfully created\nNew ticket ID: %s";
-        String createdId = ticketService.create(Integer.parseInt(args.get("project_id")), args.get("priority"), args.get("status"), args.get("short_description"), args.get("full_description"), Integer.parseInt(args.get("employer_id"))).toString();
+        String createdId = ticketService.create(
+                Integer.parseInt(args.get("project_id")),
+                args.get("priority"), args.get("status"),
+                args.get("short_description"),
+                args.get("full_description"),
+                Integer.parseInt(args.get("employer_id"))).toString();
         return String.format(template, createdId);
     }
 
@@ -75,7 +80,15 @@ public class DefaultUserHandler extends AbstractHandler {
         StringBuilder response = new StringBuilder("Tickets:\n");
         List<Ticket> tickets = ticketService.getAll();
         for (Ticket t : tickets) {
-            response.append(String.format(template, t.getId(), t.getProjectId(), t.getPriority(), t.getStatus(), t.getShortDescription(), t.getFullDescription(), t.getEmployerId()));
+            response.append(String.format(
+                    template,
+                    t.getId(),
+                    t.getProjectId(),
+                    t.getPriority(),
+                    t.getStatus(),
+                    t.getShortDescription(),
+                    t.getFullDescription(),
+                    t.getEmployerId()));
         }
         return response.toString();
     }
@@ -102,7 +115,15 @@ public class DefaultUserHandler extends AbstractHandler {
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getPriority(), ticket.getStatus(), ticket.getShortDescription(), ticket.getFullDescription(), ticket.getEmployerId());
+        return String.format(
+                template,
+                ticket.getId(),
+                ticket.getProjectId(),
+                ticket.getPriority(),
+                ticket.getStatus(),
+                ticket.getShortDescription(),
+                ticket.getFullDescription(),
+                ticket.getEmployerId());
     }
 
     protected String pickUpTicket(Map<String, String> args) {

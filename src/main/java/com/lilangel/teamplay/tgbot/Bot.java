@@ -80,11 +80,10 @@ public class Bot extends TelegramLongPollingBot {
             AbstractHandler handler;
             if (currentUser.getIsAdmin()) {
                 handler = handlers.get("adminHandler");
-                return handler.requestHandler(message, parseArgs(message));
             } else {
                 handler = handlers.get("defaultUserHandler");
-                return handler.requestHandler(message, parseArgs(message));
             }
+            return handler.requestHandler(message, parseArgs(message));
         } else if (message.startsWith("/auth")) {
             Map<String, String> args = parseArgs(message);
             String password = args.get("password");

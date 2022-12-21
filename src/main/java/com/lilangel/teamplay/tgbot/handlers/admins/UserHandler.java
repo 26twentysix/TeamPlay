@@ -44,7 +44,7 @@ public class UserHandler extends AbstractHandler {
                     `/user help` - print this message
                     `/user get_all` - get all users
                     `/user get_by_id id={id}` - get user by id
-                    `/user create tg_id={tg_id} employer_id={employer_id} is_admin={is_admin} - create new user
+                    `/user create tg_id={tg_id} employer_id={employer_id} is_admin={is_admin}` - create new user
                     `/user delete_by_id id={id}` - delete user""";
         WRONG_COMMAND_MESSAGE = "Wrong command, try `/user help` to get available commands";
         ARGS_COUNT_TO_CREATE = 3;
