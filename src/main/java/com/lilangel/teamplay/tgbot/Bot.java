@@ -1,6 +1,8 @@
 package com.lilangel.teamplay.tgbot;
 
 import com.lilangel.teamplay.models.User;
+import com.lilangel.teamplay.service.impl.AuthServiceImpl;
+import com.lilangel.teamplay.service.impl.EmployerServiceImpl;
 import com.lilangel.teamplay.service.impl.UserServiceImpl;
 import com.lilangel.teamplay.tgbot.handlers.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +24,17 @@ public class Bot extends TelegramLongPollingBot {
 
     private final UserServiceImpl userService;
 
+    private final AuthServiceImpl authService;
+
+    private final EmployerServiceImpl employerService;
+
     @Autowired
-    public Bot(AdminHandler adminHandler, DefaultUserHandler defaultUserHandler, UserServiceImpl userService) {
+    public Bot(AdminHandler adminHandler, DefaultUserHandler defaultUserHandler, UserServiceImpl userService, AuthServiceImpl authService, EmployerServiceImpl employerService) {
         handlers.put("adminHandler", adminHandler);
         handlers.put("defaultUserHandler", defaultUserHandler);
         this.userService = userService;
+        this.authService = authService;
+        this.employerService = employerService;
     }
 
     @Value("${bot.username}")
@@ -67,15 +75,46 @@ public class Bot extends TelegramLongPollingBot {
      * @return строка ответа
      */
     public String messageHandler(String message, Long tgId) {
-        //TODO Блок с проверкой на аутентификацию
-        User currentUser = userService.getByTgId(tgId);
-        AbstractHandler handler;
-        if (currentUser.getIsAdmin()) {
-            handler = handlers.get("adminHandler");
+        if (userService.isAuthorized(tgId)) {
+            User currentUser = userService.getByTgId(tgId);
+            AbstractHandler handler;
+            if (currentUser.getIsAdmin()) {
+                handler = handlers.get("adminHandler");
+            } else {
+                handler = handlers.get("defaultUserHandler");
+            }
+            return handler.requestHandler(message, parseArgs(message));
+        } else if (message.startsWith("/auth")) {
+            Map<String, String> args = parseArgs(message);
+            return auth(tgId, args.get("name"), args.get("email"), Integer.parseInt(args.get("team_id")), args.get("password"));
         } else {
-            handler = handlers.get("defaultUserHandler");
+            return """
+                    You need to auth using
+                    `/auth name={name} email={email} team_id={team_id} password={password}`""";
         }
-        return handler.requestHandler(message, parseArgs(message));
+    }
+
+
+    /**
+     * Проверяет валидность переданного пароля. Если пароль присутствует в хранилище и не истёк,
+     * создаётся профиль работника с соответствующим длине пароля (8 - пользователь, 15 - админ) статусом
+     *
+     * @param tgId идентификатор пользователя в телеграм
+     * @param name имя работника
+     * @param email электронная почта работника
+     * @param teamId идентификатор команды
+     * @param password пароль для аутентификации
+     * @return сообщение с результатом аутентификации
+     */
+    public String auth(Long tgId, String name, String email, Integer teamId, String password) {
+        if (authService.isValid(password)) {
+            Integer employerId = employerService.create(name, email, teamId);
+            boolean isAdmin = password.length() == 15;
+            userService.create(tgId, employerId, isAdmin);
+            return "Successfully authenticated";
+        } else {
+            return "Invalid password. Try again or ask for new password";
+        }
     }
 
     /**
