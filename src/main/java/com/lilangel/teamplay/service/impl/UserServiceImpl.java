@@ -1,10 +1,7 @@
 package com.lilangel.teamplay.service.impl;
 
-import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.exception.UserNotFoundException;
-import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.models.User;
-import com.lilangel.teamplay.repository.TicketRepository;
 import com.lilangel.teamplay.repository.UserRepository;
 import com.lilangel.teamplay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +15,10 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final TicketRepository ticketRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, TicketRepository ticketRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.ticketRepository = ticketRepository;
     }
 
     @Override
@@ -65,30 +60,5 @@ public class UserServiceImpl implements UserService {
 
     public User getByTgId(Long tgId) {
         return userRepository.getUserByTgId(tgId);
-    }
-
-    @Override
-    public void changeInfo(Integer ticketId, String... newInfo) throws TicketNotFoundException {
-        Optional<Ticket> ticket = ticketRepository.findById(ticketId);
-        if (ticket.isPresent()) {
-            Ticket chosenTicket = ticket.get();
-            if (newInfo.length == 2) {
-                chosenTicket.setPriority(newInfo[1]);
-            }
-            chosenTicket.setFullDescription(newInfo[0]);
-        } else {
-            throw new TicketNotFoundException();
-        }
-    }
-
-    @Override
-    public void pickUpTicket(Integer ticketId, Long tgId) throws UserNotFoundException {
-        Optional<Ticket> ticket = ticketRepository.findById(ticketId);
-        if (ticket.isPresent()) {
-            Ticket chosenTicket = ticket.get();
-            chosenTicket.setEmployerId(getByTgId(tgId).getEmployerId());
-        } else {
-            throw new UserNotFoundException();
-        }
     }
 }
