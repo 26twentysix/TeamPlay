@@ -29,6 +29,11 @@ public class DefaultUserHandler extends AbstractHandler {
         handlers.put("help", this::help);
         this.ticketService = ticketService;
         WRONG_COMMAND_MESSAGE = "Default user wrong command msg";
+        handlers.put("help", this::help);
+        handlers.put("create_ticket", this::createTicket);
+        handlers.put("view_tickets", this::viewTickets);
+        handlers.put("change_ticket_info", this::changeTicketInfo);
+        handlers.put("pick_up_ticket", this::pickUpTicket);
         HELP_MESSAGE = """
                 /user Help:
                     `/user help` - print this message
@@ -101,12 +106,16 @@ public class DefaultUserHandler extends AbstractHandler {
         return String.format(template, ticket.getId(), ticket.getProjectId(), ticket.getPriority(), ticket.getStatus(), ticket.getShortDescription(), ticket.getFullDescription(), ticket.getEmployerId());
     }
 
-    protected String pickUpTicket(Map<String, String> args) throws TicketNotFoundException {
+    protected String pickUpTicket(Map<String, String> args) {
         String template = " You took ticket with ID: %s";
-        HashMap<String, String> newArgs = new HashMap<>();
-        newArgs.put("status", "picked_up");
-        newArgs.put("employer_id", args.get("tg_id"));
-        ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
+        try {
+            HashMap<String, String> newArgs = new HashMap<>();
+            newArgs.put("status", "picked_up");
+            newArgs.put("employer_id", args.get("tg_id"));
+            ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
+        } catch (TicketNotFoundException e) {
+            return e.getMessage();
+        }
         return String.format(template, args.get("id"));
     }
 
