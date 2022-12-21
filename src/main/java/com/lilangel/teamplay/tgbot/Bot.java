@@ -86,10 +86,17 @@ public class Bot extends TelegramLongPollingBot {
             return handler.requestHandler(message, parseArgs(message));
         } else if (message.startsWith("/auth")) {
             Map<String, String> args = parseArgs(message);
-            return auth(tgId, args.get("name"), args.get("email"), Integer.parseInt(args.get("team_id")), args.get("password"));
+            String password = args.get("password");
+            if (password.length() == 15) {
+                return auth(tgId, args.get("name"), args.get("email"), null, password);
+            }
+            return auth(tgId, args.get("name"), args.get("email"), Integer.parseInt(args.get("team_id")), password);
         } else {
             return """
-                    You need to auth using
+                    You need to auth.
+                    To auth as admin with password len 15 use
+                    `/auth name={name} email={email} password={password}`
+                    To auth as default user with password len 8 use
                     `/auth name={name} email={email} team_id={team_id} password={password}`""";
         }
     }
@@ -111,7 +118,10 @@ public class Bot extends TelegramLongPollingBot {
             Integer employerId = employerService.create(name, email, teamId);
             boolean isAdmin = password.length() == 15;
             userService.create(tgId, employerId, isAdmin);
-            return "Successfully authenticated";
+            if (isAdmin) {
+                return "Successfully authenticated as admin";
+            }
+            return "Successfully authenticated as user";
         } else {
             return "Invalid password. Try again or ask for new password";
         }

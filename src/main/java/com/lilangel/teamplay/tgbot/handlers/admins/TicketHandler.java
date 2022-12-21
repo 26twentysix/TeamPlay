@@ -45,7 +45,7 @@ public class TicketHandler extends AbstractHandler {
                     `/ticket help` - print this message
                     `/ticket get_all` - get all tickets
                     `/ticket get_by_id id={id}` - get ticket by id
-                    `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new employer
+                    `/ticket create project_id={project_id} priority={priority} status={status} short_description={short_description} full_description={full_description} employer_id={employer_id}` - create new ticket
                     `/ticket delete_by_id id={id}` - delete ticket""";
         WRONG_COMMAND_MESSAGE = "Wrong command, try `/ticket help` to get available commands";
         ARGS_COUNT_TO_CREATE = 6;
