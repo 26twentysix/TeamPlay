@@ -44,7 +44,7 @@ public interface TicketService {
      */
     List<Ticket> getAll();
 
-    void updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException;
+    Ticket updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException;
 
 }
 
