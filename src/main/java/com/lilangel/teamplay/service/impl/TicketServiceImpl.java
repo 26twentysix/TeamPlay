@@ -4,14 +4,12 @@ import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.models.Ticket;
 import com.lilangel.teamplay.repository.TicketRepository;
 import com.lilangel.teamplay.service.TicketService;
-import com.lilangel.teamplay.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -57,22 +55,25 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void changeTicketState(Integer ticketId, String status) throws TicketNotFoundException {
+    public void updateTicketInfo(Integer ticketId, Map<String, String> args) throws TicketNotFoundException {
         Optional<Ticket> ticket = ticketRepository.findById(ticketId);
         if (ticket.isPresent()) {
             Ticket chosenTicket = ticket.get();
-            chosenTicket.setStatus(status);
+            Map<String, Consumer<String>> map = new HashMap<>();
+            map.put("priority", chosenTicket::setPriority);
+            map.put("full_description", chosenTicket::setFullDescription);
+            map.put("short_description", chosenTicket::setShortDescription);
+            map.put("status", chosenTicket::setStatus);
+            for (String command : map.keySet()) {
+                if (args.get(command) != null) {
+                    map.get(command).accept(command);
+                }
+            }
+            if (args.get("employer_id") != null) {
+                chosenTicket.setEmployerId(Integer.parseInt(args.get("employer_id")));
+            }
         } else {
             throw new TicketNotFoundException();
         }
-    }
-
-    public List<Ticket> viewTickets() {
-        return getAll();
-    }
-
-    public Integer createTicket(Integer projectId, String priority, String status, String shortDescription,
-                                String fullDescription, Integer employerId) {
-        return create(projectId, priority, status, shortDescription, fullDescription, employerId);
     }
 }
