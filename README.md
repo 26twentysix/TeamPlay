@@ -1,5 +1,7 @@
 # Currently, in dev. <br /> Info here may be outdated and/or wrong.
 # TeamPlay
+<img src="assets/banner.png" alt="banner.png">
+
 # About
 Organize your company work
 
