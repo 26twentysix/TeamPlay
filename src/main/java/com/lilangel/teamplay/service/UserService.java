@@ -1,5 +1,6 @@
 package com.lilangel.teamplay.service;
 
+import com.lilangel.teamplay.exception.TicketNotFoundException;
 import com.lilangel.teamplay.exception.UserNotFoundException;
 import com.lilangel.teamplay.models.User;
 
@@ -14,7 +15,7 @@ public interface UserService {
      * @param isAdmin    является ли пользователь админом
      * @return ответ с идентификатором пользователя
      */
-    Integer create(Integer tgId, Integer employerId, Boolean isAdmin);
+    Integer create(Long tgId, Integer employerId, Boolean isAdmin);
 
     /**
      * Удаляет пользователя по идентификатору
@@ -39,5 +40,4 @@ public interface UserService {
      * @return ответ с информацией обо всех пользователях
      */
     List<User> getAll();
-
 }
