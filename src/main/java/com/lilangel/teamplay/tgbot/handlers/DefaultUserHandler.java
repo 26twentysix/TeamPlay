@@ -45,7 +45,10 @@ public class DefaultUserHandler extends AbstractHandler {
 
     @Override
     public String requestHandler(String message, Map<String, String> args) {
-        String command = extractFirstWord(message);
+        String command = message;
+        if (message.startsWith("/")) {
+            command = extractFirstWord(message);
+        }
         if (handlers.containsKey(command)) {
             return handlers.get(command).apply(args);
         }
@@ -127,15 +130,14 @@ public class DefaultUserHandler extends AbstractHandler {
     }
 
     protected String pickUpTicket(Map<String, String> args) {
-        String template = " You took ticket with ID: %s";
         try {
             HashMap<String, String> newArgs = new HashMap<>();
-            newArgs.put("status", "picked_up");
+            newArgs.put("status", "picked up");
             ticketService.updateTicketInfo(Integer.parseInt(args.get("id")), newArgs);
+            return "You took ticket with ID: " + args.get("id");
         } catch (TicketNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, args.get("id"));
     }
 
     private String extractFirstWord(String message) {
