@@ -6,7 +6,7 @@
 
     <groupId>com.lilangel</groupId>
     <artifactId>TeamPlay</artifactId>
-    <version>0.0.2-beta</version>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

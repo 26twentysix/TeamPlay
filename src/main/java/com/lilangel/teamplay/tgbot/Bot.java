@@ -1,5 +1,9 @@
 package com.lilangel.teamplay.tgbot;
 
+import com.lilangel.teamplay.models.User;
+import com.lilangel.teamplay.service.impl.AuthServiceImpl;
+import com.lilangel.teamplay.service.impl.EmployerServiceImpl;
+import com.lilangel.teamplay.service.impl.UserServiceImpl;
 import com.lilangel.teamplay.tgbot.handlers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,32 +20,21 @@ import java.util.*;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
-
-    /**
-     * Сообщение, если команда не существует
-     */
-    private final String WRONG_COMMAND_MESSAGE;
-
-    /**
-     * Справка
-     */
-    //TODO Написать справку
-    private final String HELP_MESSAGE;
-
     Map<String, AbstractHandler> handlers = new HashMap<>();
 
+    private final UserServiceImpl userService;
+
+    private final AuthServiceImpl authService;
+
+    private final EmployerServiceImpl employerService;
+
     @Autowired
-    public Bot(EmployerHandler employerHandler, ProjectHandler projectHandler, TeamHandler teamHandler,
-               TicketHandler ticketHandler, UserHandler userHandler) {
-        handlers.put("employerHandler", employerHandler);
-        handlers.put("projectHandler", projectHandler);
-        handlers.put("teamHandler", teamHandler);
-        handlers.put("ticketHandler", ticketHandler);
-        handlers.put("userHandler", userHandler);
-        WRONG_COMMAND_MESSAGE = "Wrong command, try `/help` to get bot available commands";
-        HELP_MESSAGE = """
-                Bot Help:
-                    This is bot help message""";
+    public Bot(AdminHandler adminHandler, DefaultUserHandler defaultUserHandler, UserServiceImpl userService, AuthServiceImpl authService, EmployerServiceImpl employerService) {
+        handlers.put("adminHandler", adminHandler);
+        handlers.put("defaultUserHandler", defaultUserHandler);
+        this.userService = userService;
+        this.authService = authService;
+        this.employerService = employerService;
     }
 
     @Value("${bot.username}")
@@ -65,7 +58,7 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(messageHandler(update.getMessage().getText()));
+            message.setText(messageHandler(update.getMessage().getText(), update.getMessage().getFrom().getId()));
             message.setParseMode("Markdown");
             try {
                 execute(message);
@@ -81,29 +74,62 @@ public class Bot extends TelegramLongPollingBot {
      * @param message строка сообщения
      * @return строка ответа
      */
-    public String messageHandler(String message) {
-        if (Objects.equals(message, "/help")) {
-            return HELP_MESSAGE;
-        }
-        String command;
-        if (message.startsWith("/")) {
-            int indexOfSpace = message.indexOf(" ");
-            if (indexOfSpace == -1) {
-                command = message;
+    public String messageHandler(String message, Long tgId) {
+        if (userService.isAuthorized(tgId)) {
+            User currentUser = userService.getByTgId(tgId);
+            AbstractHandler handler;
+            if (currentUser.getIsAdmin()) {
+                handler = handlers.get("adminHandler");
             } else {
-                var parsed = message.split(" ");
-                command = parsed[0];
+                handler = handlers.get("defaultUserHandler");
             }
-            if (handlers.containsKey(command.substring(1) + "Handler")) {
-                AbstractHandler handler = handlers.get(command.substring(1) + "Handler");
-                return handler.requestHandler(getCommand(message), parseArgs(message));
+            return handler.requestHandler(message, parseArgs(message));
+        } else if (message.startsWith("/auth")) {
+            Map<String, String> args = parseArgs(message);
+            String password = args.get("password");
+            if (password.length() == 15) {
+                return auth(tgId, args.get("name"), args.get("email"), null, password);
             }
+            return auth(tgId, args.get("name"), args.get("email"), Integer.parseInt(args.get("team_id")), password);
+        } else {
+            return """
+                    You need to auth.
+                    To auth as admin with password len 15 use
+                    `/auth name={name} email={email} password={password}`
+                    To auth as default user with password len 8 use
+                    `/auth name={name} email={email} team_id={team_id} password={password}`""";
         }
-        return WRONG_COMMAND_MESSAGE;
+    }
+
+
+    /**
+     * Проверяет валидность переданного пароля. Если пароль присутствует в хранилище и не истёк,
+     * создаётся профиль работника с соответствующим длине пароля (8 - пользователь, 15 - админ) статусом
+     *
+     * @param tgId идентификатор пользователя в телеграм
+     * @param name имя работника
+     * @param email электронная почта работника
+     * @param teamId идентификатор команды
+     * @param password пароль для аутентификации
+     * @return сообщение с результатом аутентификации
+     */
+    public String auth(Long tgId, String name, String email, Integer teamId, String password) {
+        if (authService.isValid(password)) {
+            Integer employerId = employerService.create(name, email, teamId);
+            boolean isAdmin = password.length() == 15;
+            userService.create(tgId, employerId, isAdmin);
+            if (isAdmin) {
+                return "Successfully authenticated as admin";
+            }
+            return "Successfully authenticated as user";
+        } else {
+            return "Invalid password. Try again or ask for new password";
+        }
     }
 
     /**
      * Извлекает из сообщения аргументы команды
+     *
      * @param message сообщение, из которого нужно извлечь аргументы команды
      * @return Словарь вида paramName : paramValue
      */
@@ -114,10 +140,9 @@ public class Bot extends TelegramLongPollingBot {
             String argName = splittedArgs.get(i).substring(splittedArgs.get(i).lastIndexOf(" ") + 1);
             String arg;
             if (i != splittedArgs.size() - 2) {
-                arg = splittedArgs.get(i+1).substring(0, splittedArgs.get(i+1).lastIndexOf(" "));
-            }
-            else {
-                arg = splittedArgs.get(i+1);
+                arg = splittedArgs.get(i + 1).substring(0, splittedArgs.get(i + 1).lastIndexOf(" "));
+            } else {
+                arg = splittedArgs.get(i + 1);
             }
             args.put(argName, arg);
         }
@@ -126,6 +151,7 @@ public class Bot extends TelegramLongPollingBot {
 
     /**
      * Извлекает команду из сообщения
+     *
      * @param message сообщение
      * @return команда
      */

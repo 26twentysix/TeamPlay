@@ -1,8 +1,9 @@
-package com.lilangel.teamplay.tgbot.handlers;
+package com.lilangel.teamplay.tgbot.handlers.admins;
 
 import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
 import com.lilangel.teamplay.service.EmployerService;
+import com.lilangel.teamplay.tgbot.handlers.AbstractHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -96,7 +97,6 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о всех сотрудниках
      */
-    @Override
     protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
@@ -119,7 +119,6 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с информацией о сотруднике
      */
-    @Override
     protected String getById(Map<String, String> args) {
         String template = """
                 Employer:
@@ -142,7 +141,6 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с идентификатором созданного сотрудника
      */
-    @Override
     protected String create(Map<String, String> args) {
         if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
@@ -153,6 +151,9 @@ public class EmployerHandler extends AbstractHandler {
                         args.get("email"),
                         Integer.parseInt(args.get("team_id")))
                 .toString();
+        if (Integer.parseInt(createdId) == -1) {
+            return "There is no team with this id. Check the list of teams using `/team get_all` and try again";
+        }
         return String.format(template, createdId);
     }
 
@@ -162,7 +163,6 @@ public class EmployerHandler extends AbstractHandler {
      * @param args список аргументов
      * @return строка с результатом
      */
-    @Override
     protected String deleteById(Map<String, String> args) {
         try {
             employerService.deleteById(Integer.parseInt(args.get("id")));

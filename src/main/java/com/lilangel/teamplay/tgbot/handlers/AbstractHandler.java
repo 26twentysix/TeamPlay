@@ -10,12 +10,4 @@ public abstract class AbstractHandler {
     protected abstract String getWrongCommandMessage();
 
     protected abstract String help(Map<String, String> args);
-
-    protected abstract String getAll(Map<String, String> args);
-
-    protected abstract String getById(Map<String, String> args);
-
-    protected abstract String create(Map<String, String> args);
-
-    protected abstract String deleteById(Map<String, String> args);
 }

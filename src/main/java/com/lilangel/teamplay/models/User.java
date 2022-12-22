@@ -21,14 +21,13 @@ public class User {
     @GeneratedValue
     private Integer id;
 
-    private Integer tgId;
+    private Long tgId;
 
     private Integer employerId;
 
     private Boolean isAdmin;
 
-
-    public User(Integer tgId, Integer employerId, Boolean isAdmin) {
+    public User(Long tgId, Integer employerId, Boolean isAdmin) {
         this.tgId = tgId;
         this.employerId = employerId;
         this.isAdmin = isAdmin;

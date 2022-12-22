@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -25,11 +22,16 @@ public class Project {
 
     private String description;
 
-    private Integer teamId;
+    @OneToOne
+    private Team team;
 
-    public Project(String name, String description, Integer teamId) {
+    public Project(String name, String description, Team team) {
         this.name = name;
         this.description = description;
-        this.teamId = teamId;
+        this.team = team;
+    }
+
+    public Integer getTeamId() {
+        return team.getId();
     }
 }

@@ -2,7 +2,9 @@ package com.lilangel.teamplay.service.impl;
 
 import com.lilangel.teamplay.exception.EmployerNotFoundException;
 import com.lilangel.teamplay.models.Employer;
+import com.lilangel.teamplay.models.Team;
 import com.lilangel.teamplay.repository.EmployerRepository;
+import com.lilangel.teamplay.repository.TeamRepository;
 import com.lilangel.teamplay.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,17 +17,23 @@ import java.util.Optional;
 @Service
 public class EmployerServiceImpl implements EmployerService {
     private final EmployerRepository employerRepository;
+    private final TeamRepository teamRepository;
 
     @Autowired
-    public EmployerServiceImpl(EmployerRepository employerRepository) {
+    public EmployerServiceImpl(EmployerRepository employerRepository, TeamRepository teamRepository) {
         this.employerRepository = employerRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Override
     public Integer create(String name, String email, Integer teamId) {
-        Employer employer = new Employer(name, email, teamId);
-        employerRepository.save(employer);
-        return employer.getId();
+        Optional<Team> team = teamRepository.findById(teamId);
+        if (team.isPresent()) {
+            Employer employer = new Employer(name, email, team.get());
+            employerRepository.save(employer);
+            return employer.getId();
+        }
+        return -1;
     }
 
     @Override

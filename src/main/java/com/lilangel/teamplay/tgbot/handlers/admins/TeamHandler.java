@@ -1,8 +1,9 @@
-package com.lilangel.teamplay.tgbot.handlers;
+package com.lilangel.teamplay.tgbot.handlers.admins;
 
-import com.lilangel.teamplay.exception.ProjectNotFoundException;
-import com.lilangel.teamplay.models.Project;
-import com.lilangel.teamplay.service.ProjectService;
+import com.lilangel.teamplay.exception.TeamNotFoundException;
+import com.lilangel.teamplay.models.Team;
+import com.lilangel.teamplay.service.TeamService;
+import com.lilangel.teamplay.tgbot.handlers.AbstractHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @Component
-public class ProjectHandler extends AbstractHandler {
+public class TeamHandler extends AbstractHandler {
     /**
      * Справка
      */
@@ -21,10 +22,10 @@ public class ProjectHandler extends AbstractHandler {
      */
     private final String WRONG_COMMAND_MESSAGE;
     /**
-     * Количество аргументов, требуемое для создания проекта
+     * Количество аргументов, требуемое для создания команды
      */
     private final Integer ARGS_COUNT_TO_CREATE;
-    private final ProjectService projectService;
+    private final TeamService teamService;
 
     /**
      * Словарь, хранящий обработчики различных комманд
@@ -32,29 +33,29 @@ public class ProjectHandler extends AbstractHandler {
     private final Map<String, Function<Map<String, String>, String>> handlers = new HashMap<>();
 
     @Autowired
-    public ProjectHandler(ProjectService projectService) {
-        this.projectService = projectService;
+    public TeamHandler(TeamService teamService) {
+        this.teamService = teamService;
         handlers.put("help", this::help);
         handlers.put("get_all", this::getAll);
         handlers.put("create", this::create);
         handlers.put("get_by_id", this::getById);
         handlers.put("delete_by_id", this::deleteById);
         HELP_MESSAGE = """
-                /project Help:
-                    `/project help` - print this message
-                    `/project get_all` - get all projects
-                    `/project get_by_id id={id}` - get project by id
-                    `/project create name={name} description={description} team_id={team_id}` - create new project
-                    `/project delete_by_id id={id}` - delete project""";
-        WRONG_COMMAND_MESSAGE = "Wrong command, try `/project help` to get available commands";
-        ARGS_COUNT_TO_CREATE = 3;
+                /team Help:
+                    `/team help` - print this message
+                    `/team get_all` - get all teams
+                    `/team get_by_id id={id}` - get team by id
+                    `/team create name={name} lead_id={lead_id}` - create new team
+                    `/team delete_by_id id={id}` - delete team""";
+        WRONG_COMMAND_MESSAGE = "Wrong command, try `/team help` to get available commands";
+        ARGS_COUNT_TO_CREATE = 2;
     }
 
     /**
-     * Базовый обработчик для сообщений, начинающихся с "/project"
+     * Базовый обработчик для сообщений, начинающихся с "/team"
      *
      * @param command команда
-     * @param args    аргументы
+     * @param args    аргументы команды
      * @return строка ответа
      */
     @Override
@@ -89,77 +90,73 @@ public class ProjectHandler extends AbstractHandler {
      * @param args аргументы
      * @return строка с информацией о всех проектах
      */
-    @Override
     protected String getAll(Map<String, String> args) {
         String template = """
                 \t\t\t\tID: %d
                 \t\t\t\tName: %s
-                \t\t\t\tTeam ID: %d
-                \t\t\t\tDescription: %s
+                \t\t\t\tLead ID: %d
                                 
                 """;
-        StringBuilder response = new StringBuilder("Projects:\n");
-        List<Project> projects = projectService.getAll();
-        for (Project p : projects) {
-            response.append(String.format(template, p.getId(), p.getName(), p.getTeamId(), p.getDescription()));
+        StringBuilder response = new StringBuilder("Teams:\n");
+        List<Team> teams = teamService.getAll();
+        for (Team t : teams) {
+            response.append(String.format(template, t.getId(), t.getName(), t.getLeadId()));
         }
         return response.toString();
     }
 
     /**
-     * Возвращает информацию о проекте по его идентификатору
+     * Возвращает информацию о команде по его идентификатору
      *
      * @param args аргументы
-     * @return строка с информацией о проекте
+     * @return строка с информацией о команде
      */
-    @Override
     protected String getById(Map<String, String> args) {
         String template = """
-                Project:
+                Team:
                     ID: %d
                     Name: %s
-                    Team ID: %d
-                    Description: %s""";
-        Project project;
+                    Lead ID: %d""";
+        Team team;
         try {
-            project = projectService.getById(Integer.parseInt(args.get("id")));
-        } catch (ProjectNotFoundException e) {
+            team = teamService.getById(Integer.parseInt(args.get("id")));
+        } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
-        return String.format(template, project.getId(), project.getName(), project.getTeamId(), project.getDescription());
+        return String.format(template, team.getId(), team.getName(), team.getLeadId());
     }
 
     /**
-     * Создает новый проект
+     * Создает новую команду
      *
      * @param args аргументы
-     * @return строка с идентификатором созданного проекта
+     * @return строка с идентификатором созданной команды
      */
-    @Override
     protected String create(Map<String, String> args) {
         if (args.size() != ARGS_COUNT_TO_CREATE) {
             return "Wrong args number";
         }
-        String template = "Successfully created\nNew project ID: %s";
-        String createdId = projectService.create(
+        String template = "Successfully created\nNew team ID: %s";
+        String createdId = teamService.create(
                         args.get("name"),
-                        args.get("description"),
-                        Integer.parseInt(args.get("team_id")))
+                        Integer.parseInt(args.get("lead_id")))
                 .toString();
+        if (Integer.parseInt(createdId) == -1) {
+            return "There is no employer with this id. Check the list of employers using `/employer get_all` and try again";
+        }
         return String.format(template, createdId);
     }
 
     /**
-     * Удаляет проект по идентификатору
+     * Удаляет команду по идентификатору
      *
      * @param args аргументы
      * @return строка с результатом
      */
-    @Override
     protected String deleteById(Map<String, String> args) {
         try {
-            projectService.deleteById(Integer.parseInt(args.get("id")));
-        } catch (ProjectNotFoundException e) {
+            teamService.deleteById(Integer.parseInt(args.get("id")));
+        } catch (TeamNotFoundException e) {
             return e.getMessage();
         }
         return "Successfully deleted";

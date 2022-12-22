@@ -2,10 +2,7 @@ package com.lilangel.teamplay.models;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -22,11 +19,16 @@ public class Employer {
 
     private String name;
 
-    private Integer teamId;
+    @OneToOne
+    private Team team;
 
-    public Employer(String name, String email, Integer teamId) {
+    public Employer(String name, String email, Team team) {
         this.name = name;
         this.email = email;
-        this.teamId = teamId;
+        this.team = team;
+    }
+
+    public Integer getTeamId() {
+        return team.getId();
     }
 }
